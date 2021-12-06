@@ -46,6 +46,14 @@ COPY scripts/* /usr/local/bin/
 RUN chmod -R 777 /usr/local/bin/
 
 
+####Add the ability to Dev Environment in Docker Desktop
+RUN useradd -s /bin/bash -m vscode
+RUN groupadd docker && usermod -aG docker vscode
+
+USER vscode
+
+ENTRYPOINT ["sleep", "infinity"]
+
 
 
 
