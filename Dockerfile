@@ -29,7 +29,7 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 && wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/imgt2igblast.sh -P /usr/local/bin/ \
 && chmod -R 777 /usr/local/bin/ \
 && wget ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.17.1/ncbi-igblast-1.17.1-x64-linux.tar.gz -P /usr/local/ \
-&& tar -zxf /usr/local/ncbi-igblast-1.17.1-x64-linux.tar.gz -C /usr/local/ \ 
+&& tar -zxf /usr/local/ncbi-igblast-1.17.1-x64-linux.tar.gz -C /usr/local/ \
 && chmod -R 777 /usr/local/ncbi-igblast-1.17.1 \
 && rm /usr/local/ncbi-igblast-1.17.1-x64-linux.tar.gz \
 && cp /usr/local/ncbi-igblast-1.17.1/bin/* /usr/local/bin/ \
@@ -43,16 +43,17 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 
 ####Add WARPT scripts
 COPY scripts/* /usr/local/bin/
+COPY test /usr/local/test/
 RUN chmod -R 777 /usr/local/bin/
 
 
-####Add the ability to Dev Environment in Docker Desktop
-RUN useradd -s /bin/bash -m vscode
-RUN groupadd docker && usermod -aG docker vscode
+####Optional: add the ability to set up Dev Environment in Docker Desktop
+#RUN useradd -s /bin/bash -m vscode
+#RUN groupadd docker && usermod -aG docker vscode
 
-USER vscode
+#USER vscode
 
-ENTRYPOINT ["sleep", "infinity"]
+#ENTRYPOINT ["sleep", "infinity"]
 
 
 
