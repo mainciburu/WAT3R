@@ -39,7 +39,7 @@ The results will be written to **fastq_processed** and **warpt** in your current
 
 
 ### Test analysis
-This will create a new folder named **results*.
+This will create a new folder named **results*:
 ```
 analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
