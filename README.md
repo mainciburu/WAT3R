@@ -10,7 +10,7 @@ Since the software is run in a self-contained Docker image, you need [Docker](ht
 ### Installation of Docker image
 Either pull the image from Docker hub or build from source as follows.
 
-1. Clone Github repository to your local disk
+1. Clone Github repository to your local disk.
 2. From the top-level folder, build the docker image:
 ```
 docker build -t mainciburu/warpt:1.1 .
@@ -46,5 +46,5 @@ analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_
 
 
 ### Analyze your own data
-1. Copy fastq.gz files into the mounted working directory
-2. Run the alignment using `warpt` and downstream analysis using `analyze_results`
+1. Copy fastq.gz files into the mounted working directory.
+2. Run the alignment using `warpt` and downstream analysis using `analyze_results`.
