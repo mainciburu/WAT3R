@@ -6,32 +6,33 @@ This analysis pipeline is for data from the T-cell Receptor Enrichment to linK c
 ### Prerequisites
 Since the software is run in a self-contained Docker image, you need [Docker](https://www.docker.com). There are no other requirements.
 
+
 ### Installation of Docker image
 1. Clone Github repository to your local disk
 2. From the top directory, build the docker image:
 ```
-docker build
+docker build -t mainciburu/warpt:1.0
 ```
-3. Start the container (replace **source** with a local directory of choice):
+3. Start the container (replace <source> with a local directory of choice):
 ```
 docker run -it \
 	--name WARPT \
-	--mount 'type=bind,source=**<source>**,target=/warpt_wd' \
+	--mount 'type=bind,source=<source>,target=/warpt_wd' \
 	--workdir '/warpt_wd' \
-	petervangalen/warpt_test:0.3 \
-	/bin/sh
+	mainciburu/warpt:1.0 \
+	/bash
 ```
 
 
 ### Test run
-From within the Docker container, perform test run. The results will be written to *fastq_processed* and *warpt* in your current directory (it may be convenient to execute from a mounted directory).
+From within the Docker container, perform test run. The results will be written to **fastq_processed** and **warpt** in your current directory (it may be convenient to execute from a mounted directory).
 ```
 warpt -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
 ```
 
 
 ### Test analysis
-This will create a new directory *results*.
+This will create a new directory **results*.
 ```
 analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
