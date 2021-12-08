@@ -35,7 +35,7 @@ Perform test run as follows:
 ```
 warpt -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
 ```
-The results will be written to **fastq_processed** and **warpt** in your current folder (it may be convenient to execute from a mounted folder).
+The results will be written to **fastq_processed** and **warpt** in your current folder in the container. If that folder is mounted to your local device the results are more readily accessible.
 
 
 ### Test analysis
