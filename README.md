@@ -46,4 +46,4 @@ analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_
 
 ### Analyze your own data
 1. Copy fastq.gz files into the mounted working directory.
-2. Run the alignment using `warpt` and downstream analysis using `analyze_results`.
+2. Run the alignment using `warpt` and downstream analyses using `analyze_results`.
