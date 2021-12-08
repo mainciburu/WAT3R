@@ -38,7 +38,7 @@ warpt -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq
 The results will be written to **fastq_processed** and **warpt** in your current folder in the container. If that folder is mounted to your local device, the results are more readily accessible.
 
 
-The following downstream analyses will create a new folder named **results*:
+The following downstream analyses will create a new folder named **results**:
 ```
 analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
