@@ -15,7 +15,7 @@ Either pull the image from Docker hub or build from source as follows.
 ```
 docker build -t mainciburu/warpt:1.1 .
 ```
-3. Start the container (replace <source> with a local folder of choice):
+3. Start the container (replace `<source>` with a local folder of choice):
 ```
 docker run -it \
 	--name WARPT \
