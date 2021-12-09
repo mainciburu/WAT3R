@@ -34,21 +34,21 @@ warpcore -h
 The analysis is split into two parts: `warpcore` and `warpdrive`. 
 
 #### `warpcore`
-This command requires two fastq files: one (`-b`) with a 16 bp cell barcode and 12 bp UMI and one (`t`) with the TCR sequence. If you run from a folder that is mounted to your local device, the results are more readily accessible.
+This command requires two fastq files: one (`-b`) with a 16 bp cell barcode (CB) and 12 bp unique molecular identifier (UMI) and one (`-t`) with the TCR sequences. If you run from a folder that is mounted to your local device, the results will be more readily accessible.
 ```
 warpcore -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
 ```
 The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **warpcore**, which contains:
-- QC/QCplots_preFiltering.pdf, which shows the read quality scores and the masked bases.
-- QC/QCplot_clusters.pdf, which shows the proportion of reads assigned to the most highly ranked TCR cluster (x) vs. the ratio of the reads in the first over the second ranked TCR cluster (y) vs. the number of reads per BC-UMI (color). The number in the upper right quadrant shows the proportion of reads that is maintained with the default quality thresholds (`-p` and `-r` parameters for `analyze-results`).
 - sample_igblast_dp-pass.tsv, which is table of alignments for each transcript.
+- QC/QCplots_preFiltering.pdf, which shows the read quality scores and the masked bases.
+- QC/QCplot_clusters.pdf, which shows the proportion of reads assigned to the most highly ranked TCR cluster (x) vs. the ratio of the reads in the first over the second ranked TCR cluster (y) vs. the number of reads per CB-UMI (color). The number in the upper right quadrant shows the proportion of reads that is maintained with the default quality thresholds (`-p` and `-r` parameters for `warpdrive`).
 
 #### `warpdrive`
-Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns with the *cell barcode* and *cluster* (e.g. cell type annotation) from accompanying scRNA-seq.
+Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns (no header) with the *cell barcode* and *cluster* (e.g. cell type annotation) from accompanying scRNA-seq.
 ```
 warpdrive -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
-This will create a new folder named **results**:
+This will create a new folder named **warpdrive**:
 - barcode_results.csv: final results table, summarized per cell barcode.
 - barcode_UMI_results.csv: final results table, summarized per UMI.
 - plots/...
