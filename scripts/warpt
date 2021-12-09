@@ -13,7 +13,7 @@ Help()
    echo "Workflow for Association of Receptor Pairs from TREK-seq"
    echo
    echo "Help:"
-   echo "Syntax: warpt [-b -t -d -c -u -q -i -e -g -o -p]"
+   echo "Syntax: warpt [-b -t -d -c -u -l -q -i -e -g -o -p]"
    echo "options:"
    echo "   -h     Print this Help."
    echo "   -b     cell barcode and UMI fastq.gz full path and name"
@@ -21,6 +21,7 @@ Help()
    echo "   -d     working directory for analysis"
    echo "   -c     skip barcode correction"
    echo "   -u     skip UMI correction"
+   echo "   -l     optional txt.gz list of allowed barcodes for correction (default is 10x 3' v3 list)"
    echo "   -q     quality score threshold (default is 25)"
    echo "   -i     cluster identity threshold (default is 0.9)"
    echo "   -e     max error for consensus (default is 0.5)"
@@ -35,6 +36,7 @@ Help()
 BaseFolder=$(pwd)
 CorrectBC=true
 CorrectUMI=true
+MyBCList="/usr/local/3M-february-2018.txt.gz"
 MyQScore=25
 MyIdentity=0.9
 MyMaxError=0.5
@@ -44,7 +46,7 @@ MyCoreNumber=1
 
 ####################################### Options ###########################################
 
-while getopts ":hb:t:d:c:u:q:i:e:g:p:" option; do
+while getopts ":hb:t:d:c:u:l:q:i:e:g:p:" option; do
    case $option in
       h) # display Help
          Help
@@ -59,6 +61,8 @@ while getopts ":hb:t:d:c:u:q:i:e:g:p:" option; do
          CorrectBC=false;;
       u) 
          CorrectUMI=false;;
+      l)
+         MyBCList=$OPTARG;;
       q) 
          MyQScore=$OPTARG;;
       i) 
@@ -132,7 +136,7 @@ sed 's~@~+~' "seqHeaders.txt" > "qualHeaders.txt"
 if [ ${CorrectBC} = true ]; then
 	echo "CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
 	CorrectBC.py -b BCSeq.txt  \
-					 -w /usr/local/3M-february-2018.txt.gz \
+					 -w ${MyBCList} \
 					 -d 1 \
 					 -r 8 \
 					 -o BCcorrected 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
