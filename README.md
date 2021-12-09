@@ -35,15 +35,13 @@ Perform test run as follows. If you run from a folder that is mounted to your lo
 ```
 warpt -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
 ```
-The results will be written to two new folders:
-**fastq_processed**: this folder contains intermediate analysis files.
-**warpt**: this folder also contains intermediate analysis files as well as these files 
+The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **warpt**:
 - QC/QCplots_preFiltering.pdf, which shows the read quality scores and the masked bases.
 - QC/QCplot_clusters.pdf, which shows the proportion of reads assigned to the most highly ranked TCR cluster (x) vs. the ratio of the reads in the first over the second ranked TCR cluster (y) vs. the number of reads per BC-UMI (color). The number in the upper right quadrant shows the proportion of reads that is maintained with the default quality thresholds (`-p` and `-r` parameters for `analyze-results`).
 - sample_igblast_dp-pass.tsv, which is table of alignments for each transcript.
 
 
-Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns with the *cell barcode* and *cluster* (like the cell type annotation) from accompanying scRNA-seq.
+Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns with the *cell barcode* and *cluster* (e.g. cell type annotation) from accompanying scRNA-seq.
 ```
 analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
