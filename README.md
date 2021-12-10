@@ -36,7 +36,7 @@ The analysis is split into two parts: `warpcore` and `warpdrive`.
 #### `warpcore`
 This command requires two fastq files: one (`-b`) with a 16 bp cell barcode (CB) and 12 bp unique molecular identifier (UMI) and one (`-t`) with the TCR sequences. If you run from a folder that is mounted to your local device, the results will be more readily accessible.
 ```
-warpcore -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
+warpcore -b /usr/local/testdata/BCseq_sub1.fastq.gz -t /usr/local/testdata/TCRseq_sub1.fastq.gz
 ```
 The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **warpcore**, which contains:
 - sample_igblast_dp-pass.tsv, which is table of alignments for each transcript.
@@ -46,7 +46,7 @@ The results will be written to two new folders, **fastq_processed** with interme
 #### `warpdrive`
 Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns (no header) with the *cell barcode* and *cluster* (e.g. cell type annotation) from accompanying scRNA-seq.
 ```
-warpdrive -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
+warpdrive -t /warpt_wd/warpcore/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/testdata/BM191119_Groups.txt
 ```
 This will create a new folder named **warpdrive**:
 - barcode_results.csv: final results table, summarized per cell barcode.
