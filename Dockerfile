@@ -43,7 +43,7 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 
 ####Add WARPT scripts
 COPY scripts/* /usr/local/bin/
-COPY test /usr/local/test/
+COPY testdata /usr/local/testdata
 RUN chmod -R 777 /usr/local/bin/
 
 
