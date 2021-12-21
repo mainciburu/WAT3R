@@ -29,21 +29,21 @@ docker run -it \
 ### Test run
 From within the Docker container, this should show the help menu:
 ```
-warpt -h
+warpcore -h
 ```
 Perform test run as follows:
 ```
-warpt -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
+warpcore -b /usr/local/test/data/BCseq_sub1.fastq.gz -t /usr/local/test/data/TCRseq_sub1.fastq.gz
 ```
 The results will be written to **fastq_processed** and **warpt** in your current folder in the container. If that folder is mounted to your local device, the results are more readily accessible.
 
 
 The following downstream analyses will create a new folder named **results**:
 ```
-analyze_results -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
+warpdrive -t /warpt_wd/warpt/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/test/data/BM191119_Groups.txt
 ```
 
 
 ### Analyze your own data
 1. Copy fastq.gz files into the mounted working directory.
-2. Run the alignment using `warpt` and downstream analyses using `analyze_results`.
+2. Run the alignment using `warpcore` and downstream analyses using `warpdrive`.
