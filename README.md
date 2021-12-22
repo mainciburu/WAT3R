@@ -13,42 +13,42 @@ Either pull the image from Docker hub or build from source as follows.
 1. Clone Github repository to your local disk.
 2. From the top-level folder, build the docker image:
 ```
-docker build -t mainciburu/warpt .
+docker build -t mainciburu/wat3r .
 ```
 3. Start the container (replace `<source>` with a local folder of choice):
 ```
 docker run -it \
-	--name WARPT \
-	--mount 'type=bind,source=<source>,target=/warpt_wd' \
-	--workdir '/warpt_wd' \
-	mainciburu/warpt \
+	--name WAT3R \
+	--mount 'type=bind,source=<source>,target=/wat3r_wd' \
+	--workdir '/wat3r_wd' \
+	mainciburu/wat3r \
 	bash
 ```
 4. If you succesfully entered the container, this should show the help menu:
 ```
-warpcore -h
+wat3r -h
 ```
 
 
 ## Test run
-The analysis is split into two parts: `warpcore` and `warpdrive`. 
+The analysis is split into two parts: `wat3r` and `downstream`. 
 
-#### `warpcore`
+#### `wat3r`
 This command requires two fastq files: one (`-b`) with a 16 bp cell barcode (CB) and 12 bp unique molecular identifier (UMI) and one (`-t`) with the TCR sequences. If you run from a folder that is mounted to your local device, the results will be more readily accessible.
 ```
-warpcore -b /usr/local/testdata/BCseq_sub1.fastq.gz -t /usr/local/testdata/TCRseq_sub1.fastq.gz
+wat3r -b /usr/local/testdata/BCseq_test.fastq.gz -t /usr/local/testdata/TCRseq_test.fastq.gz
 ```
-The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **warpcore**, which contains:
+The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **wat3r**, which contains:
 - sample_igblast_dp-pass.tsv, which is table of alignments for each transcript.
 - QC/QCplots_preFiltering.pdf, which shows the read quality scores and the masked bases.
-- QC/QCplot_clusters.pdf, which shows the proportion of reads assigned to the most highly ranked TCR cluster (x) vs. the ratio of the reads in the first over the second ranked TCR cluster (y) vs. the number of reads per CB-UMI (color). The number in the upper right quadrant shows the proportion of reads that is maintained with the default quality thresholds, indicated by the red lines (`-p` and `-r` parameters for `warpdrive`).
+- QC/QCplot_clusters.pdf, which shows the proportion of reads assigned to the most highly ranked TCR cluster (x) vs. the ratio of the reads in the first over the second ranked TCR cluster (y) vs. the number of reads per CB-UMI (color). The number in the upper right quadrant shows the proportion of reads that is maintained with the default quality thresholds, indicated by the red lines (`-p` and `-r` parameters for `downstream`).
 
-#### `warpdrive`
+#### `downstream`
 Continue downstream analyses as follows. To include analyses per cluster and generate additional plots, use `-a` with an txt file that contains columns (no header) with the *cell barcode* and *cluster* (e.g. cell type annotation) from accompanying scRNA-seq.
 ```
-warpdrive -t /warpt_wd/warpcore/sample_igblast_db-pass.tsv -s test -d /warpt_wd/ -a /usr/local/testdata/BM191119_Groups.txt
+downstream -t /wat3r_wd/wat3r/sample_igblast_db-pass.tsv -s test -d /wat3r_wd/ -a /usr/local/testdata/PB01_clusters.txt
 ```
-This will create a new folder named **warpdrive**:
+This will create a new folder named **downstream**:
 - barcode_results.csv: final results table, summarized per cell barcode.
 - barcode_UMI_results.csv: final results table, summarized per UMI.
 - plots/...
@@ -59,4 +59,4 @@ This will create a new folder named **warpdrive**:
 
 ## Analyze your own data
 1. Copy fastq.gz files into the mounted working directory.
-2. Run the initial steps using `warpcore` and downstream analyses using `warpdrive`.
+2. Run the initial steps using `wat3r` and downstream analyses using `downstream`.
