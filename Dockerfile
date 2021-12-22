@@ -41,7 +41,7 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 && chmod -R 777 /usr/igblast \
 && chmod -R 777 /usr/germlines
 
-####Add WARPT scripts
+####Add WAT3R scripts
 COPY scripts/* /usr/local/bin/
 COPY testdata /usr/local/testdata
 RUN chmod -R 777 /usr/local/bin/
