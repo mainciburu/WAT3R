@@ -11,7 +11,7 @@ BaseFolder<-args[1]
 library(ggplot2)
 library(dplyr)
 
-setwd(paste0(BaseFolder, "/warpt"))
+setwd(paste0(BaseFolder, "/wat3r"))
 
 ns<-try(read.table("./QC/ns.txt"))
 if(class(ns)=="try-error"){

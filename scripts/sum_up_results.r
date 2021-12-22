@@ -15,11 +15,11 @@ MinProportion<-as.numeric(args[4])
 MinRatio<-as.numeric(args[5])
 scRNAannotation<-args[6]
 
-setwd(paste0(BaseFolder, "/results/"))
+setwd(paste0(BaseFolder, "/downstream/"))
 
 ### Log file
-logfile<-file(paste0(MySample, "_results_analysis.log"), open = "w")
-writeLines("########## TCR results analysis ########## \n", logfile)
+logfile<-file(paste0(MySample, "_downstream.log"), open = "w")
+writeLines("########## TCR downstream analysis ########## \n", logfile)
 writeLines(paste0(date(), "\n"), logfile)
 writeLines(paste0("Starting analysis for sample ", MySample, "\n"), logfile)
 

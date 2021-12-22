@@ -24,7 +24,7 @@ print(paste0("BaseFolder: ", BaseFolder))
 print(paste0("MySample: ", MySample))
 print(paste0("scRNAannotation: ", scRNAannotation))
 
-setwd(paste0(BaseFolder, "/results"))
+setwd(paste0(BaseFolder, "/downstream"))
 
 barcodes<-read.csv(paste0(MySample, "_barcode_results.csv"), stringsAsFactors=FALSE)
 

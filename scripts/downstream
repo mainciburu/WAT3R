@@ -1,5 +1,5 @@
 #############################################
-### WARPT pipeline - results analysis
+### WAT3R pipeline - downstream analysis
 #############################################
 
 
@@ -10,18 +10,18 @@ Help()
 {
    # Display Help
    echo
-   echo "Workflow for Association of Receptor Pairs from TREK-seq"
+   echo "Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq"
    echo
    echo "Help:"
-   echo "Syntax: warpdrive [-t -s -a -p -r -d]"
+   echo "Syntax: downstream [-t -s -a -p -r -d]"
    echo "options:"
    echo "   -h     Print this Help."
-   echo "   -t     table (.tsv) of alignments created with warpt"
+   echo "   -t     table (.tsv) of alignments created with wat3r"
    echo "   -s     sample name"
    echo "   -a     RNA seq annotations full path and name"
    echo "   -p     cluster proportion threshold"
    echo "   -r     cluster ratio threshold"
-   echo "   -d     working directory for WARPT analysis"
+   echo "   -d     working directory for wat3r downstream analysis"
    echo
 }
 
@@ -56,7 +56,7 @@ while getopts ":ht:s:a:p:r:d:" option; do
          echo "Error: -${OPTARG} requires an argument."
          exit;;
       \?) # Invalid option
-         echo "Error: Invalid option $OPTARG. Try analize_results.sh -h"
+         echo "Error: Invalid option $OPTARG. Try downstream -h"
          exit;;
    esac
 done
@@ -71,22 +71,22 @@ fi
 
 
 # create folders
-if [ ! -e ${BaseFolder}/results/ ]; then
-	mkdir ${BaseFolder}/results/
-	mkdir ${BaseFolder}/results/plots/
+if [ ! -e ${BaseFolder}/downstream/ ]; then
+	mkdir ${BaseFolder}/downstream/
+	mkdir ${BaseFolder}/downstream/plots/
 fi
 
 
 ## -----------------------------------------------------------------------
-### Results analysis
+### Downstream analysis
 
-cp ${MyTable} ${BaseFolder}/results/
-cp ${BaseFolder}/warpt/stats.log ${BaseFolder}/results/
-cp ${BaseFolder}/warpt/QC/BC_UMI_cluster_metrics.txt ${BaseFolder}/results/
+cp ${MyTable} ${BaseFolder}/downstream/
+cp ${BaseFolder}/wat3r/stats.log ${BaseFolder}/downstream/
+cp ${BaseFolder}/wat3r/QC/BC_UMI_cluster_metrics.txt ${BaseFolder}/downstream/
 
 # with RNAseq annotations
 if [ -f $scRNAannotation ]; then
-	cp ${scRNAannotation} ${BaseFolder}/results/
+	cp ${scRNAannotation} ${BaseFolder}/downstream/
    sum_up_results.r ${BaseFolder} ${MyTable} ${MySample} ${MinProportion} ${MinRatio} ${scRNAannotation}
    plots.r ${BaseFolder} ${MySample} ${scRNAannotation}
 

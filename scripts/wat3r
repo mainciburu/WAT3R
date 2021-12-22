@@ -1,5 +1,5 @@
 #############################################
-### WARPT pipeline
+### WAT3R pipeline
 #############################################
 
 
@@ -10,10 +10,10 @@ Help()
 {
    # Display Help
    echo
-   echo "Workflow for Association of Receptor Pairs from TREK-seq"
+   echo "Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq"
    echo
    echo "Help:"
-   echo "Syntax: warpcore [-b -t -d -c -u -l -q -i -e -g -o -p]"
+   echo "Syntax: wat3r [-b -t -d -c -u -l -q -i -e -g -o -p]"
    echo "options:"
    echo "   -h     Print this Help."
    echo "   -b     cell barcode and UMI fastq.gz full path and name"
@@ -79,7 +79,7 @@ while getopts ":hb:t:d:c:u:l:q:i:e:g:p:" option; do
          echo "Error: -${OPTARG} requires an argument."
          exit;;
       \?) # Invalid option
-         echo "Error: Invalid option $OPTARG. Try warpt -h"
+         echo "Error: Invalid option $OPTARG. Try wat3r -h"
          exit;;
    esac
 done
@@ -98,15 +98,15 @@ if [ ! -e ${BaseFolder}/fastq_processed/ ]; then
 	mkdir ${BaseFolder}/fastq_processed/
 fi
 
-if [ ! -e ${BaseFolder}/warpt/ ]; then
-	mkdir ${BaseFolder}/warpt/
-	mkdir ${BaseFolder}/warpt/QC/
+if [ ! -e ${BaseFolder}/wat3r/ ]; then
+	mkdir ${BaseFolder}/wat3r/
+	mkdir ${BaseFolder}/wat3r/QC/
 fi
 
 
 # Log file 
-touch ${BaseFolder}/warpt/warpt.log
-echo "REFORMATING FASTQ FILES \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+touch ${BaseFolder}/wat3r/wat3r.log
+echo "REFORMATING FASTQ FILES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Rearrange Fastq --------------------------------
 cd ${BaseFolder}/fastq_processed/
@@ -134,12 +134,12 @@ sed 's~@~+~' "seqHeaders.txt" > "qualHeaders.txt"
 
 ## Correct barcodes
 if [ ${CorrectBC} = true ]; then
-	echo "CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+	echo "CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 	CorrectBC.py -b BCSeq.txt  \
 					 -w ${MyBCList} \
 					 -d 1 \
 					 -r 8 \
-					 -o BCcorrected 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+					 -o BCcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 	## extract UMIs and join to corrected barcodes
 	cat BCSeq.txt | awk '{print substr($0,17)}' > UMI.txt
 	paste -d '' BCcorrected.txt UMI.txt > BCcorrectedUMI.txt
@@ -149,9 +149,9 @@ if [ ${CorrectBC} = true ]; then
 	
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
-		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCcorrectedUMImasked.txt \
-						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		## Join corrected BC and UMI
 		paste -d '' BCcorrected.txt UMIcorrected.txt > BCSeq_final.txt
 
@@ -159,7 +159,7 @@ if [ ${CorrectBC} = true ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		mv BCcorrectedUMImasked.txt BCSeq_final.txt
 
 	fi
@@ -168,13 +168,13 @@ fi
 
 ## Skip barcode correction
 if [ ${CorrectBC} = false ]; then
-	echo "SKIPING CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+	echo "SKIPING CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
-		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCSeq.txt \
-						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		# Extract BC
 		cat BCSeq.txt | awk '{print substr($0,0,16)}' > BC.txt
 		# Join BC and corrected UMI
@@ -184,7 +184,7 @@ if [ ${CorrectBC} = false ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		cp BCSeq.txt BCSeq_final.txt
 
 	fi
@@ -201,11 +201,11 @@ paste -d '\n' seqHeaders.txt Read1.txt qualHeaders.txt Read1_Q.txt > sample.fast
 
 cat sample.fastq | paste - - - - | awk -F '\t' '{if ($2 !~/^NNNNNNNNNNNNNNNNNNNNNNNNNNNN/){ print $0}}'| tr "\t" "\n" > sample_filtered.fastq
 
-mv sample_filtered.fastq ${BaseFolder}/warpt/
+mv sample_filtered.fastq ${BaseFolder}/wat3r/
 
 ### --------------------------------------------------------------------------
 
-cd ${BaseFolder}/warpt/
+cd ${BaseFolder}/wat3r/
 
 # 1) Find barcodes and convert them in tag
 # MaskPrimers extract => look for the barcodes in a fixed sequence region
@@ -216,7 +216,7 @@ cd ${BaseFolder}/warpt/
 	# --mode cut: remove barcode region from sequence
 	# --failed: creates file containing records that failed
 
-MaskPrimers.py extract -s sample_filtered.fastq --start 0 --len 28 --pf BARCODE --mode cut --failed --log MP.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+MaskPrimers.py extract -s sample_filtered.fastq --start 0 --len 28 --pf BARCODE --mode cut --failed --log MP.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Count Ns per line
 cat sample_filtered_primers-pass.fastq | awk 'NR%4==2' | grep -o -n 'N' | cut -d : -f 1 | uniq -c > QC/ns.txt
@@ -233,7 +233,7 @@ QCplots_preFiltering.r $BaseFolder
 	# -s: input fastq	
 	# --failed: creates file containing records that failed
 
-FilterSeq.py quality -q ${MyQScore} -s sample_filtered_primers-pass.fastq --failed --log FS.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+FilterSeq.py quality -q ${MyQScore} -s sample_filtered_primers-pass.fastq --failed --log FS.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 
 # 3) Cluster sequences with same BC+UMI => discard products of barcode swapping
@@ -242,10 +242,10 @@ FilterSeq.py quality -q ${MyQScore} -s sample_filtered_primers-pass.fastq --fail
 	# -k: output field name
 	# --ident: sequence identity threshold for the uclust algorithm
 
-ClusterSets.py set -s sample_filtered_primers-pass_quality-pass.fastq -f BARCODE -k CLUSTER --log CS.log --failed --ident ${MyIdentity} --exec /usr/local/bin/usearch 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+ClusterSets.py set -s sample_filtered_primers-pass_quality-pass.fastq -f BARCODE -k CLUSTER --log CS.log --failed --ident ${MyIdentity} --exec /usr/local/bin/usearch 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Join BARCODE and CLUSTER header tags
-ParseHeaders.py merge -s sample_filtered_primers-pass_quality-pass_cluster-pass.fastq -f BARCODE CLUSTER -k BARCODE_CLUSTER --delim "|" "=" "_" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+ParseHeaders.py merge -s sample_filtered_primers-pass_quality-pass_cluster-pass.fastq -f BARCODE CLUSTER -k BARCODE_CLUSTER --delim "|" "=" "_" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Extract BC + UMI + cluster
 cat sample_filtered_primers-pass_quality-pass_cluster-pass_reheader.fastq | awk 'NR%4==1' | awk 'BEGIN{FS="="};{print $4};END{}' > "${BaseFolder}/fastq_processed/BCSeq_final_filtered_qfiltered_cluster.txt" 
@@ -260,11 +260,11 @@ QCplots_clustering.r $BaseFolder
 	# --maxerror: calculate error rate (number of missmatches) per consensus and remove groups exceding the given value
 	# --maxgap: frequency of allowed gap values for each position. Positions exceeding the threshold are deleted from the consensus
 
-BuildConsensus.py -s sample_filtered_primers-pass_quality-pass_cluster-pass_reheader.fastq  --bf BARCODE_CLUSTER -n 3 --maxerror ${MyMaxError} --maxgap ${MyMaxGap} --outname consensus --log BC.log --failed --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+BuildConsensus.py -s sample_filtered_primers-pass_quality-pass_cluster-pass_reheader.fastq  --bf BARCODE_CLUSTER -n 3 --maxerror ${MyMaxError} --maxgap ${MyMaxGap} --outname consensus --log BC.log --failed --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 nreads=$(cat  BC.log | grep "SEQCOUNT" | awk -F " " '{sum+=$2};END{print sum}')   ## count number of sequences reviewed
 
-echo "Reads used for consensus building: ${nreads} \n" 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+echo "Reads used for consensus building: ${nreads} \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # convert consensus fastq into fasta
 paste - - - - < consensus_consensus-pass.fastq | cut -f 1,2 | sed 's/^@/>/' | tr "\t" "\n" > sample.fa
@@ -275,7 +275,7 @@ paste - - - - < consensus_consensus-pass.fastq | cut -f 1,2 | sed 's/^@/>/' | tr
 	# --format blast: output format
 	# -b: IgBLAST database directory
 
-AssignGenes.py igblast -s sample.fa --organism ${MyOrganism} --loci tr --format blast -b /usr/igblast 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+AssignGenes.py igblast -s sample.fa --organism ${MyOrganism} --loci tr --format blast -b /usr/igblast 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # 6) Create database file to store alignment results
 	# -i: alignment output file 
@@ -284,8 +284,8 @@ AssignGenes.py igblast -s sample.fa --organism ${MyOrganism} --loci tr --format 
 	# --extended: include additional aligner specific fields in the output
 	# --partial: include incomplete V(D)J alignments
 
-MakeDb.py igblast -i sample_igblast.fmt7 -s sample.fa -r /usr/germlines/imgt/${MyOrganism}/vdj/ --log MDB.log --extended --failed --partial 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+MakeDb.py igblast -i sample_igblast.fmt7 -s sample.fa -r /usr/germlines/imgt/${MyOrganism}/vdj/ --log MDB.log --extended --failed --partial 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # sum up consensus log
-ParseLog.py -l BC.log -o stats.log -f BARCODE SEQCOUNT CONSCOUNT ERROR 2>&1 | tee -a ${BaseFolder}/warpt/warpt.log
+ParseLog.py -l BC.log -o stats.log -f BARCODE SEQCOUNT CONSCOUNT ERROR 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
