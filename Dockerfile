@@ -41,10 +41,11 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 && chmod -R 777 /usr/igblast \
 && chmod -R 777 /usr/germlines
 
-####Add WAT3R scripts
+####Add WAT3R scripts and test data
 COPY scripts/* /usr/local/bin/
-COPY testdata /usr/local/testdata
-RUN chmod -R 777 /usr/local/bin/
+COPY test/data/* /usr/local/testdata
+RUN chmod -R 777 /usr/local/bin/ \
+&& chmod -R 777 /usr/local/testdata
 
 
 ####Optional: add the ability to set up Dev Environment in Docker Desktop
