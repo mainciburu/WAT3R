@@ -83,6 +83,7 @@ fi
 cp ${MyTable} ${BaseFolder}/downstream/
 cp ${BaseFolder}/wat3r/stats.log ${BaseFolder}/downstream/
 cp ${BaseFolder}/wat3r/QC/BC_UMI_cluster_metrics.txt ${BaseFolder}/downstream/
+cp ${BaseFolder}/wat3r/wat3rMetrics.txt ${BaseFolder}/downstream/
 
 # with RNAseq annotations
 if [ -f $scRNAannotation ]; then

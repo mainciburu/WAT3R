@@ -17,6 +17,9 @@ scRNAannotation<-args[6]
 
 setwd(paste0(BaseFolder, "/downstream/"))
 
+### Metrics table
+metrics<-read.table("wat3rMetrics.txt", header=T, sep = "\t", stringsAsFactors=F)
+
 ### Log file
 logfile<-file(paste0(MySample, "_downstream.log"), open = "w")
 writeLines("########## TCR downstream analysis ########## \n", logfile)
@@ -26,6 +29,9 @@ writeLines(paste0("Starting analysis for sample ", MySample, "\n"), logfile)
 ### Import TCR alingnment results
 db<-read.table(MyTable, sep = "\t", stringsAsFactors = F, header = T, row.names = NULL)
 writeLines(paste0("Imported ", nrow(db), " results \n"), logfile)
+nread<-sum(db$consensus_count)
+writeLines(paste0("Number of aligned reads: ", nread, " \n"), logfile)
+metrics<-rbind(metrics, c("Consensus and alignment", nread))
 
 ## Import consensus building error
 x<-read.table("stats.log", fill = T, header = T, sep = "\t", row.names = NULL)
@@ -52,6 +58,7 @@ writeLines(paste0("Selected ", nrow(db), " results passing filter \n"), logfile)
 writeLines(paste0("Found ", length(unique(db$barcode)), " unique cellular barcodes \n"), logfile)
 nread<-sum(db$consensus_count)
 writeLines(paste0("Number of reads passing clustering filter: ", nread, " \n"), logfile)
+metrics<-rbind(metrics, c("Selected clusters", nread))
 
 ## Entries with no CDR3
 a<-sum(db$cdr3=="")
@@ -179,6 +186,7 @@ barcodes$TRAJ.2 <- TRA_df_2$j_call[match(barcodes$BC,TRA_df_2$barcode)]
 ### Final reads used
 nread<-sum(barcodes$TRB_nReads, na.rm = T)+sum(barcodes$TRA_nReads, na.rm = T)+sum(barcodes$TRA.2_nReads, na.rm = T)
 writeLines(paste0("Final Read Number: ", nread, "\n"), logfile)
+metrics<-rbind(metrics, c("Selected TCR calls", nread))
 
 ## Save table
 write.csv(barcodes, paste0(MySample, "_barcode_results.csv"), row.names = F)
@@ -198,6 +206,21 @@ if(is.na(scRNAannotation)){
    writeLines("No RNAseq annotations found \n", logfile)
    writeLines("Closing \n", logfile)
    close(logfile)
+
+   ## plot metrics
+   metrics$ReadNumber<-as.numeric(metrics$ReadNumber)
+   metrics$ReadPercentage<-(metrics$ReadNumber/metrics$ReadNumber[1])*100
+   metrics$Step<-factor(metrics$Step, levels = unique(metrics$Step))
+   pdf("./plots/ReadPercentage_FilteringSteps.pdf", width = 6, height = 7)
+   ggplot(metrics, aes(Step, ReadPercentage, fill = Step)) + geom_bar(stat = "identity", colour = "black") + theme_bw() + 
+     theme(text = element_text(size = 20, colour = "black"),
+           axis.text.x = element_text(angle = 30, hjust = 1, colour = "black"),
+           axis.text.y = element_text(colour = "black")) +
+     scale_fill_grey() + theme() + 
+     theme(legend.position = "none") +  labs(y = "% of Reads")
+   dev.off()
+   write.table(metrics, "wat3rMetrics_downstream.txt", sep = "\t", row.names=F, quote=F)
+
    opt <- options(show.error.messages = FALSE)
    on.exit(options(opt))
    stop()
@@ -215,6 +238,7 @@ barcodes$RNAannotation<-bc.sc$V2[match(barcodes$BC, bc.sc$V1)]
 barcodes$RNAannotation[is.na(barcodes$RNAannotation)]<-"Not_annotated"
 nread<-sum(barcodes$TRB_nReads[barcodes$InRNAseq==T], na.rm = T)+sum(barcodes$TRA_nReads[barcodes$InRNAseq==T], na.rm = T)+sum(barcodes$TRA.2_nReads[barcodes$InRNAseq==T], na.rm = T)
 writeLines(paste0("Final Read Number overlapping with scRNAseq: ", nread, "\n"), logfile)
+metrics<-rbind(metrics, c("scRNAseq integration", nread))
 
 
 ### TRA and TRB clones
@@ -258,4 +282,19 @@ writeLines(paste0("Adjusted Rand Index for TRA and TRB CDR3 clones: ", ari, "\n"
 write.csv(barcodes, paste0(MySample, "_barcode_results.csv"), row.names = F)
 
 close(logfile)
+
+## plot metrics 
+metrics$ReadNumber<-as.numeric(metrics$ReadNumber)
+metrics$ReadPercentage<-(metrics$ReadNumber/metrics$ReadNumber[1])*100
+metrics$Step<-factor(metrics$Step, levels = unique(metrics$Step))
+pdf("./plots/ReadPercentage_FilteringSteps.pdf", width = 6, height = 7)
+ggplot(metrics, aes(Step, ReadPercentage, fill = Step)) + geom_bar(stat = "identity", colour = "black") + theme_bw() + 
+     theme(text = element_text(size = 20, colour = "black"),
+           axis.text.x = element_text(angle = 30, hjust = 1, colour = "black"),
+           axis.text.y = element_text(colour = "black")) +
+     scale_fill_grey() + theme() + 
+     theme(legend.position = "none") +  labs(y = "% of Reads")
+dev.off()
+
+write.table(metrics, "wat3rMetrics_downstream.txt", sep = "\t", row.names=F, quote=F)
 

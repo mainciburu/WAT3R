@@ -106,8 +106,11 @@ fi
 
 # Log file 
 touch ${BaseFolder}/wat3r/wat3r.log
-echo "REFORMATING FASTQ FILES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+echo "REFORMATING FASTQ FILES" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
+# Metrics table
+touch ${BaseFolder}/wat3r/wat3rMetrics.txt
+echo -e "Step\tReadNumber" > ${BaseFolder}/wat3r/wat3rMetrics.txt
 # Rearrange Fastq --------------------------------
 cd ${BaseFolder}/fastq_processed/
 
@@ -132,9 +135,13 @@ paste -d ":" "seqHeaders.txt" "BCSeq.txt"  > "seqHeaders_BC.txt"
 ## Add qualHeader (line 3)
 sed 's~@~+~' "seqHeaders.txt" > "qualHeaders.txt"
 
+# initial number of reads
+nr=$(cat BCSeq.txt|wc -l)
+echo -e "Sequenced Reads\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
+
 ## Correct barcodes
 if [ ${CorrectBC} = true ]; then
-	echo "CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+	echo "CORRECTING BARCODES" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 	CorrectBC.py -b BCSeq.txt  \
 					 -w ${MyBCList} \
 					 -d 1 \
@@ -149,7 +156,7 @@ if [ ${CorrectBC} = true ]; then
 	
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
-		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCcorrectedUMImasked.txt \
 						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		## Join corrected BC and UMI
@@ -159,7 +166,7 @@ if [ ${CorrectBC} = true ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "SKIPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		mv BCcorrectedUMImasked.txt BCSeq_final.txt
 
 	fi
@@ -168,11 +175,11 @@ fi
 
 ## Skip barcode correction
 if [ ${CorrectBC} = false ]; then
-	echo "SKIPING CORRECTING BARCODES \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+	echo "SKIPING CORRECTING BARCODES" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
-		echo "CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCSeq.txt \
 						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		# Extract BC
@@ -184,13 +191,16 @@ if [ ${CorrectBC} = false ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "SKIPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		cp BCSeq.txt BCSeq_final.txt
 
 	fi
 
 fi
 
+# number of reads
+nr=$(cat BCSeq_final.txt|wc -l)
+echo -e "Barcode Correction\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
 
 ## New fastq
 paste -d '' BCSeq_final.txt TCRSeq.txt > Read1.txt
@@ -235,6 +245,10 @@ QCplots_preFiltering.r $BaseFolder
 
 FilterSeq.py quality -q ${MyQScore} -s sample_filtered_primers-pass.fastq --failed --log FS.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
+# number of reads
+nr=$(cat sample_filtered_primers-pass_quality-pass.fastq|echo $((`wc -l`/4)))
+echo -e "Qscore filtering\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
+
 
 # 3) Cluster sequences with same BC+UMI => discard products of barcode swapping
 	# -s: input sequence
@@ -264,7 +278,7 @@ BuildConsensus.py -s sample_filtered_primers-pass_quality-pass_cluster-pass_rehe
 
 nreads=$(cat  BC.log | grep "SEQCOUNT" | awk -F " " '{sum+=$2};END{print sum}')   ## count number of sequences reviewed
 
-echo "Reads used for consensus building: ${nreads} \n" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+echo "Reads used for consensus building: ${nreads}" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # convert consensus fastq into fasta
 paste - - - - < consensus_consensus-pass.fastq | cut -f 1,2 | sed 's/^@/>/' | tr "\t" "\n" > sample.fa
@@ -288,4 +302,3 @@ MakeDb.py igblast -i sample_igblast.fmt7 -s sample.fa -r /usr/germlines/imgt/${M
 
 # sum up consensus log
 ParseLog.py -l BC.log -o stats.log -f BARCODE SEQCOUNT CONSCOUNT ERROR 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
-
