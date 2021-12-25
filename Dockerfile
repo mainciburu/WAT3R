@@ -43,7 +43,7 @@ RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238a
 
 ####Add WAT3R scripts and test data
 COPY scripts/* /usr/local/bin/
-COPY test/data/* /usr/local/testdata/
+COPY testdata/* /usr/local/testdata/
 RUN chmod -R 777 /usr/local/bin/ \
 && chmod -R 777 /usr/local/testdata
 
