@@ -36,7 +36,7 @@ The analysis is split into two parts: `wat3r` and `downstream`.
 #### `wat3r`
 This command requires two fastq files: one (`-b`) with a 16 bp cell barcode (CB) and 12 bp unique molecular identifier (UMI) and one (`-t`) with the TCR sequences. If you run from a folder that is mounted to your local device, the results will be more readily accessible.
 ```
-wat3r -b /usr/local/testdata/BCseq_test.fastq.gz -t /usr/local/testdata/TCRseq_test.fastq.gz
+wat3r -b /usr/local/test/data/BCseq_test.fastq.gz -t /usr/local/test/data/TCRseq_test.fastq.gz
 ```
 The results will be written to two new folders, **fastq_processed** with intermediate analysis files and **wat3r**, which contains:
 - sample_igblast_dp-pass.tsv, which is table of alignments for each transcript.
