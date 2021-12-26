@@ -1,0 +1,1 @@
+{"wat3r_workflow.wat3r.bc_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/BCseq_test.fastq.gz","wat3r_workflow.wat3r.tcr_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/TCRseq_test.fastq.gz","wat3r_workflow.wat3r.memory":32,"wat3r_workflow.wat3r.disk_space":16,"wat3r_workflow.wat3r.num_threads":2}
