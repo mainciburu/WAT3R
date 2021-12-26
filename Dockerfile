@@ -1,5 +1,8 @@
 FROM continuumio/miniconda3:4.10.3
 
+#Set the working directory to be used when the docker gets run
+WORKDIR /
+
 #Install R
 RUN apt-get update && apt-get install -y r-base && apt-get install -y wget
 
