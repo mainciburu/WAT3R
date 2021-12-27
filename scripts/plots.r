@@ -86,7 +86,7 @@ ggplot(df, aes(CellAnnotation, nReads, fill = Gene)) + geom_bar(stat = "identity
   theme(axis.text.x = element_text(angle = 30, hjust = 1)) + labs(y = "nReads") + ggtitle(paste0(sum(df$nReads), " Reads in final TCR analysis"))
 dev.off()
 
-# TRA and TRB correspondance -------------
+# TRA and TRB correspondence -------------
 # Match TRA CDR3 and TRB CRD3 in RNAseq cells
 barcodes.ov<-barcodes[barcodes$InRNAseq==TRUE,]
 #sort(table(barcodes.ov$TRB_CDR3), decreasing = T)[1:10]
@@ -154,7 +154,7 @@ ht <- Heatmap(t(as.matrix(heatmap.tib)),
 # Plot
 grobs.ls <- list(grid.grabExpr(draw(ht)))#, grid.grabExpr(draw(legend_pack)))
 
-pdf("./plots/TRB_TRA_correspondance.pdf", width = 8, height = 12)
+pdf("./plots/TRB_TRA_correspondence.pdf", width = 8, height = 12)
 grid.arrange(grobs = grobs.ls, ncol = 1, nrow = 2, heights = c(1,3))
 dev.off()
 

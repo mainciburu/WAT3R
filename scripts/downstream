@@ -13,21 +13,24 @@ Help()
    echo "Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq"
    echo
    echo "Help:"
-   echo "Syntax: downstream [-t -s -a -p -r -d]"
+   echo "Syntax: downstream [-u -c -f -s -n -a -p -r -d]"
    echo "options:"
    echo "   -h     Print this Help."
-   echo "   -t     table (.tsv) of alignments created with wat3r"
-   echo "   -s     sample name"
-   echo "   -a     RNA seq annotations full path and name"
-   echo "   -p     cluster proportion threshold"
-   echo "   -r     cluster ratio threshold"
+   echo "   -u     table of UMI alignments created with wat3r (sample_igblast_db-pass.tsv)"
+   echo "   -c     table of cluster metrics created with wat3r (BC_UMI_cluster_metrics.txt)"
+   echo "   -f     table of filtered reads created with wat3r (wat3rMetrics.txt)"
+   echo "   -s     table of stats created with wat3r (stats.log)"
+   echo "   -n     sample name"
+   echo "   -a     RNA-seq annotations full path and name"
+   echo "   -p     cluster proportion threshold (default is 0.5)"
+   echo "   -r     cluster ratio threshold (default is 2)"
    echo "   -d     working directory for wat3r downstream analysis"
    echo
 }
 
 ################################ Default variables ########################################
 
-MySample="mysample"
+SampleName="mysample"
 scRNAannotation="false"
 MinProportion=0.5
 MinRatio=2
@@ -35,15 +38,21 @@ BaseFolder=$(pwd)
 
 ################################ Options ###########################################
 
-while getopts ":ht:s:a:p:r:d:" option; do
+while getopts ":hu:c:f:s:n:a:p:r:d:" option; do
    case $option in
       h) # display Help
          Help
          exit;;
-      t) 
-         MyTable=$OPTARG;;
-      s) 
-         MySample=$OPTARG;;
+      u) 
+         UMI_Alignments=$OPTARG;;
+      c)
+         Cluster_Metrics=$OPTARG;;
+      f)
+         Filter_Metrics=$OPTARG;;
+      s)
+         Stats=$OPTARG;;
+      n) 
+         SampleName=$OPTARG;;
       a) 
          scRNAannotation=$OPTARG;;
       p) 
@@ -62,17 +71,18 @@ while getopts ":ht:s:a:p:r:d:" option; do
 done
 
 ################ mandatory arguments ################################
-if [ ! "$MyTable" ]; then
-  echo "argument -t must be provided"
+if [ ! "$UMI_Alignments" ] || [ ! "$Cluster_Metrics" ] || [ ! "$Filter_Metrics" ] || [ ! "$Stats" ]; then
+  echo "arguments -u, -c, -f and -s must be provided"
   Help
   exit
 fi
-######################################################################
+#####################################################################
 
 
 # create folders
 if [ ! -e ${BaseFolder}/downstream/ ]; then
 	mkdir ${BaseFolder}/downstream/
+   mkdir ${BaseFolder}/downstream/input/
 	mkdir ${BaseFolder}/downstream/plots/
 fi
 
@@ -80,22 +90,23 @@ fi
 ## -----------------------------------------------------------------------
 ### Downstream analysis
 
-cp ${MyTable} ${BaseFolder}/downstream/
-cp ${BaseFolder}/wat3r/stats.log ${BaseFolder}/downstream/
-cp ${BaseFolder}/wat3r/QC/BC_UMI_cluster_metrics.txt ${BaseFolder}/downstream/
-cp ${BaseFolder}/wat3r/wat3rMetrics.txt ${BaseFolder}/downstream/
+# Copy output from wat3r into the downstream processing folder
+cp ${UMI_Alignments} ${BaseFolder}/downstream/input/sample_igblast_db-pass.tsv
+cp ${Cluster_Metrics} ${BaseFolder}/downstream/input/BC_UMI_cluster_metrics.txt
+cp ${Filter_Metrics} ${BaseFolder}/downstream/input/wat3rMetrics.txt
+cp ${Stats} ${BaseFolder}/downstream/input/stats.log
 
 # with RNAseq annotations
 if [ -f $scRNAannotation ]; then
-	cp ${scRNAannotation} ${BaseFolder}/downstream/
-   sum_up_results.r ${BaseFolder} ${MyTable} ${MySample} ${MinProportion} ${MinRatio} ${scRNAannotation}
-   plots.r ${BaseFolder} ${MySample} ${scRNAannotation}
+	cp ${scRNAannotation} ${BaseFolder}/downstream/input/
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${scRNAannotation}
+   plots.r ${BaseFolder} ${SampleName} ${scRNAannotation}
 
 fi
 
 # with NO RNAseq annotations
 if [ ! -f $scRNAannotation ]; then
-   sum_up_results.r ${BaseFolder} ${MyTable} ${MySample} ${MinProportion} ${MinRatio}
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio}
 fi
 
 

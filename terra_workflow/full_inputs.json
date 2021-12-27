@@ -1,1 +1,9 @@
-{"wat3r_workflow.wat3r.bc_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/PB01_fastq/Undetermined_S0_L001_R1_001.fastq.gz","wat3r_workflow.wat3r.tcr_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/PB01_fastq/Undetermined_S0_L001_I1_001.fastq.gz","wat3r_workflow.wat3r.memory":32,"wat3r_workflow.wat3r.disk_space":50,"wat3r_workflow.wat3r.num_threads":2}
+{"wat3r_workflow.annotation":true,
+"wat3r_workflow.sample_name":"PB01",
+"wat3r_workflow.wat3r.bc_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/PB01_fastq/Undetermined_S0_L001_R1_001.fastq.gz",
+"wat3r_workflow.wat3r.tcr_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/PB01_fastq/Undetermined_S0_L001_I1_001.fastq.gz",
+"wat3r_workflow.wat3r.memory":32,
+"wat3r_workflow.wat3r.disk_space":50,
+"wat3r_workflow.wat3r.num_threads":2,
+"wat3r_workflow.downstream_anno.cluster_annotation":"https://github.com/mainciburu/WAT3R/blob/27538a8eda131b436ecaf2a895f14faef77460bd/testdata/PB01_clusters.txt"
+}

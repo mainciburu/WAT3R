@@ -9,32 +9,31 @@ library(cowplot)
 args=(commandArgs(TRUE))
 print(args)
 BaseFolder<-args[1]
-MyTable<-args[2]
-MySample<-args[3]
-MinProportion<-as.numeric(args[4])
-MinRatio<-as.numeric(args[5])
-scRNAannotation<-args[6]
+SampleName<-args[2]
+MinProportion<-as.numeric(args[3])
+MinRatio<-as.numeric(args[4])
+scRNAannotation<-args[5]
 
 setwd(paste0(BaseFolder, "/downstream/"))
 
 ### Metrics table
-metrics<-read.table("wat3rMetrics.txt", header=T, sep = "\t", stringsAsFactors=F)
+metrics<-read.table("input/wat3rMetrics.txt", header=T, sep = "\t", stringsAsFactors=F)
 
 ### Log file
-logfile<-file(paste0(MySample, "_downstream.log"), open = "w")
+logfile<-file(paste0(SampleName, "_downstream.log"), open = "w")
 writeLines("########## TCR downstream analysis ########## \n", logfile)
 writeLines(paste0(date(), "\n"), logfile)
-writeLines(paste0("Starting analysis for sample ", MySample, "\n"), logfile)
+writeLines(paste0("Starting analysis for sample ", SampleName, "\n"), logfile)
 
-### Import TCR alingnment results
-db<-read.table(MyTable, sep = "\t", stringsAsFactors = F, header = T, row.names = NULL)
+### Import TCR alignment results
+db<-read.table("input/sample_igblast_db-pass.tsv", sep = "\t", stringsAsFactors = F, header = T, row.names = NULL)
 writeLines(paste0("Imported ", nrow(db), " results \n"), logfile)
 nread<-sum(db$consensus_count)
 writeLines(paste0("Number of aligned reads: ", nread, " \n"), logfile)
 metrics<-rbind(metrics, c("Consensus and alignment", nread))
 
 ## Import consensus building error
-x<-read.table("stats.log", fill = T, header = T, sep = "\t", row.names = NULL)
+x<-read.table("input/stats.log", fill = T, header = T, sep = "\t", row.names = NULL)
 db$error_rate<-x$ERROR[match(db$sequence_id, x$BARCODE)]
 
 
@@ -49,7 +48,7 @@ db<-db%>%arrange(barcode, desc(consensus_count))
 
 ### Filter to selected clusters
 writeLines("Filtering by selected TCR sequence clusters ---------------- \n", logfile)
-cl<-read.table("BC_UMI_cluster_metrics.txt")
+cl<-read.table("input/BC_UMI_cluster_metrics.txt")
 cl.selected<-cl[cl$Proportion>MinProportion & cl$Ratio>=MinRatio,c("BC.UMI", "Cluster")]
 cl.selected<-paste0(cl.selected$BC.UMI, "_", cl.selected$Cluster)
 
@@ -93,7 +92,7 @@ a<-db %>% group_by(barcode, cdr3) %>% summarise(error_rate_sum_BC_cdr3 = sum(err
 db<-left_join(db, a, by = c('barcode', 'cdr3')) %>% dplyr::select(-c(error_rate_sum_BC_cdr3,counsensus_count_BC_cdr3,error_rate_weighted))
 
 # Save db table
-write.csv(db, paste0(MySample, "_barcode_UMI_results.csv"), row.names = F)
+write.csv(db, paste0(SampleName, "_barcode_UMI_results.csv"), row.names = F)
 
 ### QC
 # Distribution of consensus counts per BC + UMI
@@ -189,7 +188,7 @@ writeLines(paste0("Final Read Number: ", nread, "\n"), logfile)
 metrics<-rbind(metrics, c("Selected TCR calls", nread))
 
 ## Save table
-write.csv(barcodes, paste0(MySample, "_barcode_results.csv"), row.names = F)
+write.csv(barcodes, paste0(SampleName, "_barcode_results.csv"), row.names = F)
 
 ### QC 
 # Distribution of CDR3 UMI counts
@@ -212,12 +211,14 @@ if(is.na(scRNAannotation)){
    metrics$ReadPercentage<-(metrics$ReadNumber/metrics$ReadNumber[1])*100
    metrics$Step<-factor(metrics$Step, levels = unique(metrics$Step))
    pdf("./plots/ReadPercentage_FilteringSteps.pdf", width = 6, height = 7)
+   print(
    ggplot(metrics, aes(Step, ReadPercentage, fill = Step)) + geom_bar(stat = "identity", colour = "black") + theme_bw() + 
      theme(text = element_text(size = 20, colour = "black"),
            axis.text.x = element_text(angle = 30, hjust = 1, colour = "black"),
            axis.text.y = element_text(colour = "black")) +
      scale_fill_grey() + theme() + 
      theme(legend.position = "none") +  labs(y = "% of Reads")
+   )
    dev.off()
    write.table(metrics, "wat3rMetrics_downstream.txt", sep = "\t", row.names=F, quote=F)
 
@@ -228,7 +229,7 @@ if(is.na(scRNAannotation)){
 
 ### Overlap with scRNAseq
 writeLines("Overlapping with scRNAseq ------------ \n", logfile)
-bc.sc<-read.table(scRNAannotation, header = F, stringsAsFactors = F)
+bc.sc<-read.table(paste0("input/", basename(scRNAannotation)), header = F, stringsAsFactors = F)
 bc.sc$V1<-substr(x = bc.sc$V1, start = 1, stop = 16)
 writeLines(paste0("Imported ", nrow(bc.sc), " annotated cells \n"), logfile)
 writeLines(paste0("Found ", sum(bc.sc$V1%in%barcodes$BC), " overlapping barcodes \n"), logfile)
@@ -279,7 +280,7 @@ ari<-adjustedRandIndex(barcodes$TRA_CloneID, barcodes$TRB_CloneID)
 writeLines(paste0("Adjusted Rand Index for TRA and TRB CDR3 clones: ", ari, "\n"), logfile)
 
 ## Save table
-write.csv(barcodes, paste0(MySample, "_barcode_results.csv"), row.names = F)
+write.csv(barcodes, paste0(SampleName, "_barcode_results.csv"), row.names = F)
 
 close(logfile)
 
