@@ -66,16 +66,16 @@ Plots without cell annotations:
 - plots/ReadPercentage_FilteringSteps.pdf, which shows the percent reads remaining after each filtering step.
 
 Additional plots with cell annotations:
-- plots/valid_reads.pdf, which shows 
-- plots/TRB_TRA_correspondence.pdf, which shows 
-- plots/trb_top_clones.pdf, which shows 
-- plots/trb_top_clones_norm.pdf, which shows 
-- plots/TRB_distance_heatmap.pdf, which shows 
-- plots/TRB_clone_size_celltype.pdf, which shows 
-- plots/TRA_TRB_clone_size.pdf, which shows 
-- plots/scRNAseq_TCRrecovery_proportions.pdf, which shows 
-- plots/CDR3_UMIcount_distribution.pdf, which shows 
-- plots/CDR3_clones_heatmap.pdf, which shows 
+- plots/scRNAseq_TCRrecovery_proportions.pdf, which shows the proportion of each cell annotation for which TRA and/or TRB genes were detected
+- plots/valid_reads.pdf, which shows the total number of reads assigned to TRA and TRB genes, separated by cell annotation.
+- plots/CDR3_UMIcount_distribution.pdf, which shows a histogram of the number of UMI (UMI counts) assigned to TRA and TRB CDR3 sequences. Frequencies are independently counted for barcodes overlapping or not the scRNAseq dataset. 
+- plots/CDR3_clones_heatmap.pdf, which shows a heatmap with the cell number matching specific TRA and TRB CDR3 sequences.
+- plots/TRB_TRA_correspondence.pdf, which shows individual cell correspondence between TRA and TRB CDR3 sequences, together with cell annotation. 
+- plots/TRA_TRB_clone_size.pdf, which shows the ranking of clone sizes for both TRA and TRB, expressed in total cell number and normalized cell number (i.e. % of the total cell number with TRA or TRB that belong to a clone). 
+- plots/trb_top_clones.pdf, which shows the size and cell composition of the 50 biggest clones, using the TRB CDR3 sequences. Size is measured as total cell number.
+- plots/trb_top_clones_norm.pdf, which shows the size and cell composition of the 50 biggest clones, using the TRB CDR3 sequences. Size is measured as normalized cell number.
+- plots/TRB_clone_size_celltype.pdf, which shows the size of the clone to which each of the annotated cells belongs, separated by annotation.  
+- plots/TRB_distance_heatmap.pdf, which shows a heatmap with the Hamming distance between the TRB CDR3 sequences from the 50 biggest clones. 
 
 
 ## Analyze your own data
