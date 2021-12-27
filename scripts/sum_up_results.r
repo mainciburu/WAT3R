@@ -222,9 +222,7 @@ if(is.na(scRNAannotation)){
    dev.off()
    write.table(metrics, "wat3rMetrics_downstream.txt", sep = "\t", row.names=F, quote=F)
 
-   opt <- options(show.error.messages = FALSE)
-   on.exit(options(opt))
-   stop()
+   quit("no")
 }
 
 ### Overlap with scRNAseq
