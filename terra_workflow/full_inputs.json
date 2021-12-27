@@ -5,5 +5,5 @@
 "wat3r_workflow.wat3r.memory":32,
 "wat3r_workflow.wat3r.disk_space":50,
 "wat3r_workflow.wat3r.num_threads":2,
-"wat3r_workflow.downstream_anno.cluster_annotation":"https://github.com/mainciburu/WAT3R/blob/27538a8eda131b436ecaf2a895f14faef77460bd/testdata/PB01_clusters.txt"
+"wat3r_workflow.downstream_anno.cluster_annotation":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/PB01_clusters.txt"
 }

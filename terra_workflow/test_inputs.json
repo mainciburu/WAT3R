@@ -1,9 +1,9 @@
 {"wat3r_workflow.annotation":true,
 "wat3r_workflow.sample_name":"PB01",
-"wat3r_workflow.wat3r.bc_fastq":"https://github.com/mainciburu/WAT3R/blob/27538a8eda131b436ecaf2a895f14faef77460bd/testdata/BCseq_test.fastq.gz",
-"wat3r_workflow.wat3r.tcr_fastq":"https://github.com/mainciburu/WAT3R/blob/27538a8eda131b436ecaf2a895f14faef77460bd/testdata/TCRseq_test.fastq.gz",
+"wat3r_workflow.wat3r.bc_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/BCseq_test.fastq.gz",
+"wat3r_workflow.wat3r.tcr_fastq":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/TCRseq_test.fastq.gz",
 "wat3r_workflow.wat3r.memory":16,
 "wat3r_workflow.wat3r.disk_space":8,
 "wat3r_workflow.wat3r.num_threads":2,
-"wat3r_workflow.downstream_anno.cluster_annotation":"https://github.com/mainciburu/WAT3R/blob/27538a8eda131b436ecaf2a895f14faef77460bd/testdata/PB01_clusters.txt"
+"wat3r_workflow.downstream_anno.cluster_annotation":"gs://fc-8a27e37e-359d-45e3-8aa4-39af60d16098/testdata/PB01_clusters.txt"
 }
