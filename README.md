@@ -66,7 +66,7 @@ Plots without cell annotations:
 - plots/db_histograms.pdf, which shows a histogram of read numbers (>=3) per consensus sequence, and a histogram of the error rate per consensus sequence.
 - plots/ReadPercentage_FilteringSteps.pdf, which shows the percent reads remaining after each filtering step.
 
-Additional plots with cell annotations:
+Additional plots if cell annotations were provided:
 - plots/scRNAseq_TCRrecovery_proportions.pdf, which shows the proportion of each cell annotation for which TRA and/or TRB genes were detected
 - plots/valid_reads.pdf, which shows the total number of reads assigned to TRA and TRB genes, separated by cell annotation.
 - plots/CDR3_UMIcount_distribution.pdf, which shows a histogram of the number of UMI (UMI counts) assigned to TRA and TRB CDR3 sequences. Frequencies are independently counted for barcodes overlapping or not the scRNAseq dataset. 
