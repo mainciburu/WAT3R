@@ -61,6 +61,7 @@ downstream -u /workdir/wat3r/sample_igblast_db-pass.tsv \
 This will create a new folder named **downstream**:
 - barcode_results.csv: final results table, summarized per cell barcode.
 - barcode_UMI_results.csv: final results table, summarized per UMI.
+- 
 Plots without cell annotations:
 - plots/db_histograms.pdf, which shows a histogram of read numbers (>=3) per consensus sequence, and a histogram of the error rate per consensus sequence.
 - plots/ReadPercentage_FilteringSteps.pdf, which shows the percent reads remaining after each filtering step.
