@@ -83,4 +83,4 @@ Additional plots if cell annotations were provided:
 1. Copy fastq.gz files into the mounted working directory.
 2. Run the initial steps using `wat3r` and downstream analyses using `downstream`.
 
-![waterimage](image/water.jpeg)
+![waterimage](image/water.jpg)
