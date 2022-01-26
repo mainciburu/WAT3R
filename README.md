@@ -1,3 +1,4 @@
+<img align="right" src="image/WAT3Rlogo.png">
 # WAT3R | Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq
 
 This analysis pipeline is for data from the T-cell Receptor Enrichment to linK clonotypes (TREK-seq) protocol as reported by DePasquale et al, [bioRxiv 2021](https://www.biorxiv.org/content/10.1101/2021.12.01.470599v1). The protocol uses 10x 3' v3 or v3.1 scRNA-seq cDNA as input and recovers *TRAV* and *TRBV* variable regions, which make up the &alpha; and &beta; chain of the T-cell receptor (TCR). Sequencing is performed on the Illumina MiSeq set to 28 bp for Read 1 (cell barcode + UMI) and 150 bp for Index 1 (*TRAV* or *TRBV*). Demultiplexing is done using Illumina `bcl2fastq` with the options `--use-bases-mask Y28,I150 --barcode-mismatches 0,0 --create-fastq-for-index-reads` and a SampleSheet with 150xN as the index sequence (not provided). After demultiplexing the sequencing data, this pipeline performs downstream analyses, including alignment, quality filters and generating a results table with cell barcodes and TCR assignments.
@@ -82,5 +83,3 @@ Additional plots if cell annotations were provided:
 ## Analyze your own data
 1. Copy fastq.gz files into the mounted working directory.
 2. Run the initial steps using `wat3r` and downstream analyses using `downstream`.
-
-![waterimage](image/water.jpeg)
