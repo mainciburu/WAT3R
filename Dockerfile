@@ -13,11 +13,11 @@ RUN conda install python=3.6 \
 
 #Install R packages
 RUN R -e 'install.packages(c("dplyr", "ggplot2", "RColorBrewer", "cowplot", "reshape2", "gridExtra", "stringr", "mclust", "pheatmap", "BiocManager", "e1071", "pals"), repos = c(CRAN = "http://cran.rstudio.org"))' \
-&& R -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/rjson/rjson_0.2.20.tar.gz", repo = NULL)' \
+&& R -e 'install.packages("http://cran.r-project.org/src/contrib/Archive/rjson/rjson_0.2.20.tar.gz", repo = NULL)' \
 && R -e 'BiocManager::install("ComplexHeatmap")'
 
 # Get 10x BC whitelist
-RUN wget https://github.com/10XGenomics/cellranger/raw/master/lib/python/cellranger/barcodes/3M-february-2018.txt.gz -P /usr/local/
+RUN wget http://github.com/10XGenomics/cellranger/raw/master/lib/python/cellranger/barcodes/3M-february-2018.txt.gz -P /usr/local/
 
 # Get usearch executable
 RUN wget http://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz -P /usr/local \
@@ -26,10 +26,10 @@ RUN wget http://www.drive5.com/downloads/usearch11.0.667_i86linux32.gz -P /usr/l
 
 ####Configure IgBLAST
 
-RUN wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/fetch_igblastdb.sh -P /usr/local/bin/ \
-&& wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/fetch_imgtdb.sh -P /usr/local/bin/ \
-&& wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/clean_imgtdb.py -P /usr/local/bin/ \
-&& wget https://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/imgt2igblast.sh -P /usr/local/bin/ \
+RUN wget http://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/fetch_igblastdb.sh -P /usr/local/bin/ \
+&& wget http://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/fetch_imgtdb.sh -P /usr/local/bin/ \
+&& wget http://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/clean_imgtdb.py -P /usr/local/bin/ \
+&& wget http://bitbucket.org/kleinstein/immcantation/raw/9e5f6fb95edda9901238abc28da8a29948f9de82/scripts/imgt2igblast.sh -P /usr/local/bin/ \
 && chmod -R 777 /usr/local/bin/ \
 && wget ftp://ftp.ncbi.nih.gov/blast/executables/igblast/release/1.17.1/ncbi-igblast-1.17.1-x64-linux.tar.gz -P /usr/local/ \
 && tar -zxf /usr/local/ncbi-igblast-1.17.1-x64-linux.tar.gz -C /usr/local/ \
