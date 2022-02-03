@@ -12,7 +12,7 @@ RUN conda install python=3.6 \
 && conda install -c bioconda -c conda-forge  umi_tools=1.1.2
 
 #Install R packages
-RUN R -e 'install.packages(c("dplyr", "ggplot2", "RColorBrewer", "cowplot", "reshape2", "gridExtra", "stringr", "mclust", "pheatmap", "BiocManager", "e1071", "pals"), repos = c(CRAN = "https://cran.rstudio.org"))' \
+RUN R -e 'install.packages(c("dplyr", "ggplot2", "RColorBrewer", "cowplot", "reshape2", "gridExtra", "stringr", "mclust", "pheatmap", "BiocManager", "e1071", "pals"), repos = c(CRAN = "http://cran.rstudio.org"))' \
 && R -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/rjson/rjson_0.2.20.tar.gz", repo = NULL)' \
 && R -e 'BiocManager::install("ComplexHeatmap")'
 
