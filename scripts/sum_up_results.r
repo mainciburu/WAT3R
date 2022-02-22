@@ -13,6 +13,8 @@ SampleName<-args[2]
 MinProportion<-as.numeric(args[3])
 MinRatio<-as.numeric(args[4])
 scRNAannotation<-args[5]
+BClength<-as.numeric(args[6])
+UMIlength<-as.numeric(args[7])
 
 setwd(paste0(BaseFolder, "/downstream/"))
 
@@ -38,8 +40,8 @@ db$error_rate<-x$ERROR[match(db$sequence_id, x$BARCODE)]
 
 
 ### Separate BC and UMI
-db$barcode<-substr(db$sequence_id, start = 1, stop = 16)
-db$UMI<-substr(db$sequence_id, start = 17, stop = 28)
+db$barcode<-substr(db$sequence_id, start = 1, stop = BClength)
+db$UMI<-substr(db$sequence_id, start = BClength+1, stop = BClength+UMIlength)
 writeLines(paste0("Found ", length(unique(db$barcode)), " unique cellular barcodes \n"), logfile)
 
 ### Arrange
@@ -228,7 +230,7 @@ if(is.na(scRNAannotation)){
 ### Overlap with scRNAseq
 writeLines("Overlapping with scRNAseq ------------ \n", logfile)
 bc.sc<-read.table(paste0("input/", basename(scRNAannotation)), header = F, stringsAsFactors = F)
-bc.sc$V1<-substr(x = bc.sc$V1, start = 1, stop = 16)
+bc.sc$V1<-substr(x = bc.sc$V1, start = 1, stop = BClength)
 writeLines(paste0("Imported ", nrow(bc.sc), " annotated cells \n"), logfile)
 writeLines(paste0("Found ", sum(bc.sc$V1%in%barcodes$BC), " overlapping barcodes \n"), logfile)
 barcodes$InRNAseq<-FALSE

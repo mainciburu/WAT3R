@@ -19,17 +19,21 @@ args=(commandArgs(TRUE))
 BaseFolder<-args[1]
 MySample<-args[2]
 scRNAannotation<-args[3]
+BClength<-as.numeric(args[4])
+UMIlength<-as.numeric(args[5])
 
 print(paste0("BaseFolder: ", BaseFolder))
 print(paste0("MySample: ", MySample))
 print(paste0("scRNAannotation: ", scRNAannotation))
+print(paste0("BClength: ", BClength))
+print(paste0("UMIlength: ", UMIlength))
 
 setwd(paste0(BaseFolder, "/downstream"))
 
 barcodes<-read.csv(paste0(MySample, "_barcode_results.csv"), stringsAsFactors=FALSE)
 
 bc.sc<-read.table(scRNAannotation, header = F, stringsAsFactors = F)
-bc.sc$V1<-substr(x = bc.sc$V1, start = 1, stop = 16)
+bc.sc$V1<-substr(x = bc.sc$V1, start = 1, stop = BClength)
 
 # Colors -----------------------
 col.tcr.recovery<-c("No Results"="#B8B8B8FF","No Recovery"="#357EBDFF","TRA and TRB"="#EEA236FF",
@@ -45,10 +49,7 @@ bc.sc$TCR<-barcodes$TCR_Recovery[match(bc.sc$V1, barcodes$BC)]
 bc.sc$TCR[is.na(bc.sc$TCR)]<-"No Results"
 tt<-prop.table(table(bc.sc$V2, bc.sc$TCR), margin = 1)
 df<-melt(tt)
-#celltypes.ch <- c("HSCProg", "EarlyEryth", "MidEryth", "LateEryth", "Mono", "ncMono",
-#                  "cDC", "pDC", "ProB", "PreB", "B", "Plasma",
-#                  "CD4NaiveT", "CD4MemoryT", "CD8NaiveT", "CD8MemoryT", "NK")
-#if( all(df$Var1 %in% celltypes.ch) ) { df$Var1 <- factor(df$Var1, levels = celltypes.ch) }
+
 pdf("./plots/scRNAseq_TCRrecovery_proportions.pdf", width = 7, height = 5)
 ggplot(df, aes(Var1, value, fill = Var2)) + geom_bar(stat = "identity", position = position_stack()) + scale_fill_manual(values = col.tcr.recovery) +
       labs(x = "Cell Type", y = "Proportion", fill = "TCR Recovery") + theme_bw() + theme(axis.text.x = element_text(angle = 30, hjust = 1))

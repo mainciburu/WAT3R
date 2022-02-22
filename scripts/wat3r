@@ -13,7 +13,7 @@ Help()
    echo "Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq"
    echo
    echo "Help:"
-   echo "Syntax: wat3r [-b -t -d -c -u -l -q -i -e -g -o -p]"
+   echo "Syntax: wat3r [-b -t -d -c -u -B -U -l -q -i -e -g -o -p]"
    echo "options:"
    echo "   -h     Print this Help."
    echo "   -b     cell barcode and UMI fastq.gz full path and name"
@@ -21,6 +21,8 @@ Help()
    echo "   -d     working directory for analysis"
    echo "   -c     skip barcode correction"
    echo "   -u     skip UMI correction"
+   echo "	-B		 cell barcode length  (default is 16) barcode must be placed previous to UMI"  
+   echo "	-U		 UMI length  (default is 12) UMI must be placed after barcode"
    echo "   -l     optional txt.gz list of allowed barcodes for correction (default is 10x 3' v3 list)"
    echo "   -q     quality score threshold (default is 25)"
    echo "   -i     cluster identity threshold (default is 0.9)"
@@ -36,6 +38,8 @@ Help()
 BaseFolder=$(pwd)
 CorrectBC=true
 CorrectUMI=true
+BClength=16
+UMIlength=12
 MyBCList="/usr/local/3M-february-2018.txt.gz"
 MyQScore=25
 MyIdentity=0.9
@@ -46,7 +50,7 @@ MyCoreNumber=1
 
 ####################################### Options ###########################################
 
-while getopts ":hb:t:d:c:u:l:q:i:e:g:o:p:" option; do
+while getopts ":hb:t:d:c:u:B:U:l:q:i:e:g:o:p:" option; do
    case $option in
       h) # display Help
          Help
@@ -61,6 +65,10 @@ while getopts ":hb:t:d:c:u:l:q:i:e:g:o:p:" option; do
          CorrectBC=false;;
       u) 
          CorrectUMI=false;;
+      B)
+         BClength=$OPTARG;;
+      U)
+         UMIlength=$OPTARG;;
       l)
          MyBCList=$OPTARG;;
       q) 
@@ -145,19 +153,25 @@ if [ ${CorrectBC} = true ]; then
 	CorrectBC.py -b BCSeq.txt  \
 					 -w ${MyBCList} \
 					 -d 1 \
-					 -r 8 \
+					 -l ${BClength} \
+					 -r ${MyCoreNumber} \
 					 -o BCcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 	## extract UMIs and join to corrected barcodes
-	cat BCSeq.txt | awk '{print substr($0,17)}' > UMI.txt
+	mystart=$((BClength + 1))
+	cat BCSeq.txt | awk -v mystart=$mystart -v myend=$UMIlength '{print substr($0,mystart,myend)}' > UMI.txt
 	paste -d '' BCcorrected.txt UMI.txt > BCcorrectedUMI.txt
 
 	## Mask every UMI with no valid barcode
-	cat BCcorrectedUMI.txt | sed '/NNNNNNNNNNNNNNNN/c\NNNNNNNNNNNNNNNNNNNNNNNNNNNN' > BCcorrectedUMImasked.txt 
+	nbc=$(printf 'N%.0s' $(seq 1 $BClength))
+	ntotal=$(printf 'N%.0s' $(seq 1 $(($BClength + $UMIlength))))
+	cat BCcorrectedUMI.txt | sed "/$nbc/c$ntotal" > BCcorrectedUMImasked.txt 
 	
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
 		echo "CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCcorrectedUMImasked.txt \
+						  -B ${BClength} \
+						  -U ${UMIlength} \
 						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		## Join corrected BC and UMI
 		paste -d '' BCcorrected.txt UMIcorrected.txt > BCSeq_final.txt
@@ -181,9 +195,12 @@ if [ ${CorrectBC} = false ]; then
 	if [ ${CorrectUMI} = true ]; then
 		echo "CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		CorrectUMI.py -b BCSeq.txt \
+						  -B ${BClength} \
+						  -U ${UMIlength} \
 						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		# Extract BC
-		cat BCSeq.txt | awk '{print substr($0,0,16)}' > BC.txt
+		myend=$(($BClength + 1))
+		cat BCSeq.txt | awk -v myend=$myend '{print substr($0,0,myend)}' > BC.txt
 		# Join BC and corrected UMI
 		paste -d '' BC.txt UMIcorrected.txt > BCSeq_final.txt
 
@@ -208,8 +225,9 @@ paste -d '' BCQC.txt TCRQC.txt > Read1_Q.txt
 paste -d '\n' seqHeaders.txt Read1.txt qualHeaders.txt Read1_Q.txt > sample.fastq
 
 ## Remove reads with NNNN...N in BC + UMI
-
-cat sample.fastq | paste - - - - | awk -F '\t' '{if ($2 !~/^NNNNNNNNNNNNNNNNNNNNNNNNNNNN/){ print $0}}'| tr "\t" "\n" > sample_filtered.fastq
+ntotal=$(printf 'N%.0s' $(seq 1 $(($BClength + $UMIlength))))
+ntotal=$(echo "^$ntotal")
+cat sample.fastq | paste - - - - | awk -v ntotal=$ntotal -F '\t' '{if ($2 !~ntotal){ print $0}}'| tr "\t" "\n" > sample_filtered.fastq
 
 mv sample_filtered.fastq ${BaseFolder}/wat3r/
 
@@ -226,7 +244,8 @@ cd ${BaseFolder}/wat3r/
 	# --mode cut: remove barcode region from sequence
 	# --failed: creates file containing records that failed
 
-MaskPrimers.py extract -s sample_filtered.fastq --start 0 --len 28 --pf BARCODE --mode cut --failed --log MP.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+mylength=$(($BClength + $UMIlength))
+MaskPrimers.py extract -s sample_filtered.fastq --start 0 --len ${mylength} --pf BARCODE --mode cut --failed --log MP.log --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Count Ns per line
 cat sample_filtered_primers-pass.fastq | awk 'NR%4==2' | grep -o -n 'N' | cut -d : -f 1 | uniq -c > QC/ns.txt
@@ -256,7 +275,7 @@ echo -e "Qscore filtering\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
 	# -k: output field name
 	# --ident: sequence identity threshold for the uclust algorithm
 
-ClusterSets.py set -s sample_filtered_primers-pass_quality-pass.fastq -f BARCODE -k CLUSTER --log CS.log --failed --ident ${MyIdentity} --exec /usr/local/bin/usearch 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+ClusterSets.py set -s sample_filtered_primers-pass_quality-pass.fastq -f BARCODE -k CLUSTER --log CS.log --failed --ident ${MyIdentity} --exec /usr/local/bin/usearch --nproc ${MyCoreNumber} 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 
 # Join BARCODE and CLUSTER header tags
 ParseHeaders.py merge -s sample_filtered_primers-pass_quality-pass_cluster-pass.fastq -f BARCODE CLUSTER -k BARCODE_CLUSTER --delim "|" "=" "_" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
@@ -265,7 +284,7 @@ ParseHeaders.py merge -s sample_filtered_primers-pass_quality-pass_cluster-pass.
 cat sample_filtered_primers-pass_quality-pass_cluster-pass_reheader.fastq | awk 'NR%4==1' | awk 'BEGIN{FS="="};{print $4};END{}' > "${BaseFolder}/fastq_processed/BCSeq_final_filtered_qfiltered_cluster.txt" 
 
 ## QC plots: cluster proportion and ratio
-QCplots_clustering.r $BaseFolder
+QCplots_clustering.r $BaseFolder $BClength $UMIlength
 
 # 4) Determines consensus for each BC/UMI
 	# -s: input fastq	

@@ -12,10 +12,8 @@ opts = OptionParser()
 usage = "usage: %prog [options] [inputs] Software to correct UMI reads using UMItools clusterer"
 
 opts.add_option("-b", "--MyBarcodes", help="<Read1> Accepts list of barcodes + UMI in txt")
-
-#opts.add_option("-n", "--nreads", default = 1000000, help="Number of reads to process in a given chunk")
-#opts.add_option("-r", "--ncores", default = 4, help="Number of cores for parallel processing.")
-
+opts.add_option("-B", "--BClength", default = 16, help="<barcode length")
+opts.add_option("-U", "--UMIlength", default = 12, help="<UMI length")
 opts.add_option("-o", "--output", help="Output file prefix")
 
 options, arguments = opts.parse_args()
@@ -37,14 +35,14 @@ if __name__ == "__main__":
 	bf = options.MyBarcodes
 
 	outname = options.output
-	#cpu = int(options.ncores)
-	#n = int(options.nreads)
+	bcl = int(options.BClength)
+	umil = int(options.UMIlength)
     ##############
 
 	df = pd.read_csv(bf, index_col = None, header = None, names = ['BC_UMI'])
-	df['UMI'] = [x[16:] for x in df.BC_UMI]         # extract UMIs
+	df['UMI'] = [x[bcl:bcl+umil] for x in df.BC_UMI]         # extract UMIs
 	df['BYTEUMI'] = [x.encode() for x in df.UMI]    # Encode
-	total = len(df.UMI) - sum(df.UMI=="N"*12)       # Count valid UMI reads
+	total = len(df.UMI) - sum(df.UMI=="N"*umil)       # Count valid UMI reads
 	UMIcount = df.BYTEUMI.value_counts()            # Count reads for each UMI
 	mydict = UMIcount.to_dict()					    
 

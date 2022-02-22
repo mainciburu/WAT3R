@@ -13,11 +13,13 @@ Help()
    echo "Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq"
    echo
    echo "Help:"
-   echo "Syntax: downstream [-u -c -f -s -n -a -p -r -d]"
+   echo "Syntax: downstream [-u -c -B -U -f -s -n -a -p -r -d]"
    echo "options:"
    echo "   -h     Print this Help."
    echo "   -u     table of UMI alignments created with wat3r (sample_igblast_db-pass.tsv)"
    echo "   -c     table of cluster metrics created with wat3r (BC_UMI_cluster_metrics.txt)"
+   echo "   -B     cell barcode length  (default is 16) barcode must be placed previous to UMI"  
+   echo "   -U     UMI length  (default is 12) UMI must be placed after barcode"
    echo "   -f     table of filtered reads created with wat3r (wat3rMetrics.txt)"
    echo "   -s     table of stats created with wat3r (stats.log)"
    echo "   -n     sample name"
@@ -32,13 +34,15 @@ Help()
 
 SampleName="mysample"
 scRNAannotation="false"
+BClength=16
+UMIlength=12
 MinProportion=0.5
 MinRatio=2
 BaseFolder=$(pwd)
 
 ################################ Options ###########################################
 
-while getopts ":hu:c:f:s:n:a:p:r:d:" option; do
+while getopts ":hu:c:B:U:f:s:n:a:p:r:d:" option; do
    case $option in
       h) # display Help
          Help
@@ -47,6 +51,10 @@ while getopts ":hu:c:f:s:n:a:p:r:d:" option; do
          UMI_Alignments=$OPTARG;;
       c)
          Cluster_Metrics=$OPTARG;;
+      B)
+         BClength=$OPTARG;;
+      U)
+         UMIlength=$OPTARG;;
       f)
          Filter_Metrics=$OPTARG;;
       s)
@@ -99,14 +107,14 @@ cp ${Stats} ${BaseFolder}/downstream/input/stats.log
 # with RNAseq annotations
 if [ -f $scRNAannotation ]; then
 	cp ${scRNAannotation} ${BaseFolder}/downstream/input/
-   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${scRNAannotation}
-   plots.r ${BaseFolder} ${SampleName} ${scRNAannotation}
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${scRNAannotation} ${BClength} ${UMIlength}
+   plots.r ${BaseFolder} ${SampleName} ${scRNAannotation} ${BClength} ${UMIlength}
 
 fi
 
 # with NO RNAseq annotations
 if [ ! -f $scRNAannotation ]; then
-   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio}
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${BClength} ${UMIlength}
 fi
 
 

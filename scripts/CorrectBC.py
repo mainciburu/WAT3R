@@ -18,6 +18,7 @@ usage = "usage: %prog [options] [inputs] Software to process BC reads and make d
 
 opts.add_option("-b", "--MyBarcodes", help="<Read1> Accepts list of barcodes in txt")
 opts.add_option("-w", "--whitelist", help="<gzip of the universe of valid barcodes to check")
+opts.add_option("-l", "--BClength", default = 16, help="<barcode length")
 opts.add_option("-d", "--maxdist", help="<Maximun distance from whitelist allowed in order to correct a barcode")
 
 opts.add_option("-n", "--nreads", default = 1000000, help="Number of reads to process in a given chunk")
@@ -103,7 +104,7 @@ def gen_nearby_seqs(seq,wl_idxs=None, maxdist=1):
 					
 #------ 
 
-def correct_barcode(seq, maxdist=1):
+def correct_barcode(seq, maxdist=1, mylength=16):
 	"""
 	Correct barcodes not in whitelist
     """
@@ -113,7 +114,7 @@ def correct_barcode(seq, maxdist=1):
 	for test_str in gen_nearby_seqs(seq, maxdist=maxdist):
 		return(test_str)
 
-	return "N"*16
+	return "N"*mylength
 
 
 ###########################################################################
@@ -122,7 +123,7 @@ if __name__ == "__main__":
 
 	###### INPUT 2 ######
 	bf = options.MyBarcodes
-
+	bcl = int(options.BClength)
 	outname = options.output
 	outfilename = outname + ".txt"
 	cpu = int(options.ncores)
@@ -143,18 +144,18 @@ if __name__ == "__main__":
 		with open(outfilename, 'w') as out_write:
 			for i, batch1 in enumerate(it1):
 				batch1 = [x.strip() for x in batch1]   # remove \n character
-				batch1 = [x[0:16] for x in batch1]   # select barcode
+				batch1 = [x[0:bcl] for x in batch1]   # select barcode
 				nbcs = len(batch1)
 				print("Reading and correcting " + str(nbcs) + " barcodes")
 				total+=nbcs
 				# parallel process the barcode processing and accounting of failures.
-				pool = Pool(processes=4)
-				pm = pool.map(partial(correct_barcode, maxdist = maxdist), batch1)
+				pool = Pool(processes=cpu)
+				pm = pool.map(partial(correct_barcode, maxdist = maxdist, mylength = bcl), batch1)
 				pool.close()
 				for bc, bc_corrected in zip(batch1, pm):     # keep count of discarded and corrected barcodes
 					if bc != bc_corrected:
 						changed+=1
-						if bc_corrected == "N"*16:
+						if bc_corrected == "N"*bcl:
 							discarded+=1
 				pm = [x + "\n" for x in pm]           # add \n to write into file
 				out_write.writelines(pm)

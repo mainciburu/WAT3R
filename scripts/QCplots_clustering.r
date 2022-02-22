@@ -10,6 +10,8 @@
 args=(commandArgs(TRUE))
 print(args)
 BaseFolder<-args[1]
+BClength<-as.integer(args[2])
+UMIlength<-as.integer(args[3])
 
 library(ggplot2)
 library(dplyr)
@@ -18,8 +20,8 @@ library(RColorBrewer)
 setwd(BaseFolder)
 
 reads<-read.table("./fastq_processed/BCSeq_final_filtered_qfiltered_cluster.txt", stringsAsFactors=F)
-x<-data.frame(BC.UMI=substr(x = reads$V1, start = 1, stop = 28),
-              Cluster=substr(x = reads$V1, start = 30, stop = nchar(reads$V1)))
+x<-data.frame(BC.UMI=substr(x = reads$V1, start = 1, stop = BClength+UMIlength),
+              Cluster=substr(x = reads$V1, start = BClength+UMIlength+2, stop = nchar(reads$V1)))
 x$Cluster<-factor(x$Cluster, levels = 1:max(as.integer(x$Cluster)))
 
 x<-x %>% count(BC.UMI, Cluster) %>% rename(Frequency=n) %>% arrange(BC.UMI, desc(Frequency)) 
