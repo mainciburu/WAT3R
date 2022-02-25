@@ -50,7 +50,7 @@ MyCoreNumber=1
 
 ####################################### Options ###########################################
 
-while getopts ":hb:t:d:c:u:B:U:l:q:i:e:g:o:p:" option; do
+while getopts ":hb:t:d:cuB:U:l:q:i:e:g:o:p:" option; do
    case $option in
       h) # display Help
          Help
