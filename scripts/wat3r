@@ -215,10 +215,6 @@ if [ ${CorrectBC} = false ]; then
 
 fi
 
-# number of reads
-nr=$(cat BCSeq_final.txt|wc -l)
-echo -e "Barcode Correction\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
-
 ## New fastq
 paste -d '' BCSeq_final.txt TCRSeq.txt > Read1.txt
 paste -d '' BCQC.txt TCRQC.txt > Read1_Q.txt
@@ -228,6 +224,10 @@ paste -d '\n' seqHeaders.txt Read1.txt qualHeaders.txt Read1_Q.txt > sample.fast
 ntotal=$(printf 'N%.0s' $(seq 1 $(($BClength + $UMIlength))))
 ntotal=$(echo "^$ntotal")
 cat sample.fastq | paste - - - - | awk -v ntotal=$ntotal -F '\t' '{if ($2 !~ntotal){ print $0}}'| tr "\t" "\n" > sample_filtered.fastq
+
+# number of reads
+nr=$(echo $(cat sample_filtered.fastq|wc -l)/4|bc)
+echo -e "Barcode Correction\t${nr}" >> ${BaseFolder}/wat3r/wat3rMetrics.txt
 
 mv sample_filtered.fastq ${BaseFolder}/wat3r/
 
