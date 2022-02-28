@@ -36,7 +36,7 @@ task wat3r {
     }
 
     runtime {
-        docker: "mainciburu/wat3r:1.1"
+        docker: "mainciburu/wat3r:1.3"
         memory: "${memory}GB"
         disks: "local-disk ${disk_space} HDD"
         cpu: "${num_threads}"
@@ -78,7 +78,7 @@ task downstream_anno {
     }
 
     runtime {
-        docker: "mainciburu/wat3r:1.1"
+        docker: "mainciburu/wat3r:1.3"
     }
 
     meta {
@@ -106,7 +106,7 @@ task downstream {
     }
 
     runtime {
-        docker: "mainciburu/wat3r:1.1"
+        docker: "mainciburu/wat3r:1.3"
     }
 
     meta {
