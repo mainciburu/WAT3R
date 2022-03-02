@@ -199,8 +199,7 @@ if [ ${CorrectBC} = false ]; then
 						  -U ${UMIlength} \
 						  -o UMIcorrected 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		# Extract BC
-		myend=$(($BClength + 1))
-		cat BCSeq.txt | awk -v myend=$myend '{print substr($0,0,myend)}' > BC.txt
+		cat BCSeq.txt | awk -v myend=$BClength '{print substr($0,0,myend)}' > BC.txt
 		# Join BC and corrected UMI
 		paste -d '' BC.txt UMIcorrected.txt > BCSeq_final.txt
 
