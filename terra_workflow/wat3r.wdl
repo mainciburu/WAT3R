@@ -63,6 +63,7 @@ task downstream_anno {
     output {
         File barcode_table_filter = "downstream/${sample_name}_barcode_results.csv"
         File umi_alignments_filter = "downstream/${sample_name}_barcode_UMI_results.csv"
+        File more_filter_metrics = "downstream/wat3rMetrics_downstream.txt"
         File plot1 = "downstream/plots/db_histograms.pdf"
         File plot2 = "downstream/plots/ReadPercentage_FilteringSteps.pdf"
         File plot3 = "downstream/plots/scRNAseq_TCRrecovery_proportions.pdf"
@@ -101,6 +102,7 @@ task downstream {
     output {
         File barcode_table_filter = "downstream/${sample_name}_barcode_results.csv"
         File umi_alignments_filter = "downstream/${sample_name}_barcode_UMI_results.csv"
+        File more_filter_metrics = "downstream/wat3rMetrics_downstream.txt"
         File plot1 = "downstream/plots/db_histograms.pdf"
         File plot2 = "downstream/plots/ReadPercentage_FilteringSteps.pdf"
     }
