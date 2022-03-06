@@ -180,7 +180,7 @@ if [ ${CorrectBC} = true ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "SKIPPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		mv BCcorrectedUMImasked.txt BCSeq_final.txt
 
 	fi
@@ -189,7 +189,7 @@ fi
 
 ## Skip barcode correction
 if [ ${CorrectBC} = false ]; then
-	echo "SKIPING CORRECTING BARCODES" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+	echo "SKIPPING CORRECTING BARCODES" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		
 	## Correct UMIs
 	if [ ${CorrectUMI} = true ]; then
@@ -207,7 +207,7 @@ if [ ${CorrectBC} = false ]; then
 
 	## Or skip UMI correction
 	if [ ${CorrectUMI} = false ]; then
-		echo "SKIPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
+		echo "SKIPPING CORRECTING UMI" 2>&1 | tee -a ${BaseFolder}/wat3r/wat3r.log
 		cp BCSeq.txt BCSeq_final.txt
 
 	fi
