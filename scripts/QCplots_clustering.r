@@ -27,11 +27,15 @@ x$Cluster<-factor(x$Cluster, levels = 1:max(as.integer(x$Cluster)))
 x<-x %>% count(BC.UMI, Cluster) %>% rename(Frequency=n) %>% arrange(BC.UMI, desc(Frequency)) 
 x<-x %>% group_by(BC.UMI) %>% mutate(Frequency.BC.UMI=sum(Frequency))
 x$Proportion<-x$Frequency/x$Frequency.BC.UMI
-ratio<-sapply(unique(x$BC.UMI), function(ix){
-  dat<-x[x$BC.UMI==ix,]
-  if(nrow(dat)==1){return(0)}
-  else{return(dat$Frequency[1]/dat$Frequency[2])}
-})
+
+freq.first<-x %>% group_by(BC.UMI) %>% summarise(freq.first = max(Frequency))
+x<-left_join(x, freq.first, by = "BC.UMI")
+
+ix<-names(table(x$BC.UMI))[table(x$BC.UMI)>1]
+freq.second<-x[x$BC.UMI%in%ix,]
+freq.second<-freq.second %>% group_by(BC.UMI) %>%  filter(rank(-Frequency, ties.method="first")==2) %>% select(BC.UMI, Frequency) %>% rename(freq.second=Frequency)
+x<-left_join(x, freq.second, by = "BC.UMI", keep = FALSE)
+x$Ratio<-x$freq.first/x$freq.second
 
 i<-!duplicated(x$BC.UMI)
 plotter<-data.frame(BC.UMI=x$BC.UMI[i],
@@ -39,8 +43,10 @@ plotter<-data.frame(BC.UMI=x$BC.UMI[i],
                     Frequency.BC.UMI=x$Frequency.BC.UMI[i],
                     Frequency.BC.UMI.Cluster=x$Frequency[i],
                     Proportion=x$Proportion[i],
-                    Ratio=ratio)
-plotter$logRatio<-log2(plotter$Ratio+0.05)
+                    Ratio=x$Ratio[i])
+
+plotter$Ratio[is.na(plotter$Ratio)]<-1
+plotter$logRatio<-log2(plotter$Ratio)
 plotter$logFrequency.BC.UMI<-log2(plotter$Frequency.BC.UMI)
 nread<-sum(plotter$Frequency.BC.UMI.Cluster[plotter$Proportion>0.5&plotter$Ratio>2])
 pct.read<-round((nread/sum(plotter$Frequency.BC.UMI))*100, 2)
