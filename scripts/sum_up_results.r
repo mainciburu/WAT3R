@@ -6,15 +6,25 @@ library(mclust)
 library(ggplot2)
 library(cowplot)
 
-args=(commandArgs(TRUE))
-print(args)
-BaseFolder<-args[1]
-SampleName<-args[2]
-MinProportion<-as.numeric(args[3])
-MinRatio<-as.numeric(args[4])
-scRNAannotation<-args[5]
-BClength<-as.numeric(args[6])
-UMIlength<-as.numeric(args[7])
+if(length(args)==7){
+    BaseFolder<-args[1]
+    SampleName<-args[2]
+    MinProportion<-as.numeric(args[3])
+    MinLogRatio<-as.numeric(args[4])
+    scRNAannotation<-args[5]
+    BClength<-as.numeric(args[6])
+    UMIlength<-as.numeric(args[7])
+}
+
+if(length(args)==6){
+    BaseFolder<-args[1]
+    SampleName<-args[2]
+    MinProportion<-as.numeric(args[3])
+    MinLogRatio<-as.numeric(args[4])
+    BClength<-as.numeric(args[5])
+    UMIlength<-as.numeric(args[6])
+    scRNAannotation<-NA
+}
 
 setwd(paste0(BaseFolder, "/downstream/"))
 
@@ -51,7 +61,7 @@ db<-db%>%arrange(barcode, desc(consensus_count))
 ### Filter to selected clusters
 writeLines("Filtering by selected TCR sequence clusters ---------------- \n", logfile)
 cl<-read.table("input/BC_UMI_cluster_metrics.txt")
-cl.selected<-cl[cl$Proportion>MinProportion & cl$Ratio>=MinRatio,c("BC.UMI", "Cluster")]
+cl.selected<-cl[cl$Proportion>MinProportion & cl$logRatio>=MinLogRatio,c("BC.UMI", "Cluster")]
 cl.selected<-paste0(cl.selected$BC.UMI, "_", cl.selected$Cluster)
 
 db<-db[db$sequence_id%in%cl.selected,]
