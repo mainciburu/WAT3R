@@ -25,7 +25,7 @@ Help()
    echo "   -n     sample name"
    echo "   -a     RNA-seq annotations full path and name"
    echo "   -p     cluster proportion threshold (default is 0.5)"
-   echo "   -r     cluster ratio threshold (default is 2)"
+   echo "   -r     cluster log ratio threshold (default is 1)"
    echo "   -d     working directory for wat3r downstream analysis"
    echo
 }
@@ -37,7 +37,7 @@ scRNAannotation="false"
 BClength=16
 UMIlength=12
 MinProportion=0.5
-MinRatio=2
+MinLogRatio=1
 BaseFolder=$(pwd)
 
 ################################ Options ###########################################
@@ -66,7 +66,7 @@ while getopts ":hu:c:B:U:f:s:n:a:p:r:d:" option; do
       p) 
          MinProportion=$OPTARG;;
       r) 
-         MinRatio=$OPTARG;;
+         MinLogRatio=$OPTARG;;
       d) 
          BaseFolder=$OPTARG;;
       :)    # If expected argument omitted:
@@ -107,14 +107,14 @@ cp ${Stats} ${BaseFolder}/downstream/input/stats.log
 # with RNAseq annotations
 if [ -f $scRNAannotation ]; then
 	cp ${scRNAannotation} ${BaseFolder}/downstream/input/
-   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${scRNAannotation} ${BClength} ${UMIlength}
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinLogRatio} ${scRNAannotation} ${BClength} ${UMIlength}
    plots.r ${BaseFolder} ${SampleName} ${scRNAannotation} ${BClength} ${UMIlength}
 
 fi
 
 # with NO RNAseq annotations
 if [ ! -f $scRNAannotation ]; then
-   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinRatio} ${BClength} ${UMIlength}
+   sum_up_results.r ${BaseFolder} ${SampleName} ${MinProportion} ${MinLogRatio} ${BClength} ${UMIlength}
 fi
 
 
