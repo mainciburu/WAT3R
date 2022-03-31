@@ -85,9 +85,9 @@ Additional plots if cell annotations were provided:
 
 
 ## Analyze your own data
-TREK-seq data is generated on the Illumina MiSeq set to 28 bp for Read 1 (cell barcode + UMI) and 150 bp for Index 1 (*TRAV* or *TRBV*). A SampleSheet with 150xN as the index sequence is provided to the MiSeq Control Software; an example is found [here](https://github.com/mainciburu/WAT3R/misc/SampleSheet.csv). A detailed description of the wetlab protocol, including these procedures, is under review at *Nature Protocols* as of April 2022.
+TREK-seq data is generated on the Illumina MiSeq set to 28 bp for Read 1 (cell barcode + UMI) and 150 bp for Index 1 (*TRAV* or *TRBV*). A SampleSheet with 150xN as the index sequence is provided to the MiSeq Control Software; an example is found [here](https://github.com/mainciburu/WAT3R/blob/main/misc/SampleSheet.csv). A detailed description of the wetlab protocol, including these procedures, is under review at *Nature Protocols* as of April 2022.
 
-1. Demultiplexing of TREK-seq data is done using Illumina `bcl2fastq` with the options `--use-bases-mask Y28,I150 --barcode-mismatches 0,0 --create-fastq-for-index-reads` and the aforementioned [SampleSheet](https://github.com/mainciburu/WAT3R/misc/SampleSheet.csv). 
+1. Demultiplexing of TREK-seq data is done using Illumina `bcl2fastq` with the options `--use-bases-mask Y28,I150 --barcode-mismatches 0,0 --create-fastq-for-index-reads` and the aforementioned [SampleSheet](https://github.com/mainciburu/WAT3R/blob/main/misc/SampleSheet.csv). 
 2. Copy fastq.gz files into the mounted working directory.
 3. Run the initial steps using `wat3r` and downstream analyses using `downstream`.
 
