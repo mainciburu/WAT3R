@@ -4,7 +4,9 @@
 
 This analysis pipeline is for data from the T-cell Receptor Enrichment to linK clonotypes (TREK-seq) protocol as reported by [Miller et al](https://www.nature.com/articles/s41587-022-01210-8) and [DePasquale et al](https://www.frontiersin.org/articles/10.3389/fimmu.2022.809414/abstract). The protocol uses 10x 3' v2/v3/v3.1 scRNA-seq cDNA as input and recovers *TRAV* and *TRBV* variable regions, which make up the &alpha; and &beta; chain of the T-cell receptor (TCR). Sequencing is performed on the Illumina MiSeq set to 28 bp for Read 1 (cell barcode + UMI) and 150 bp for Index 1 (*TRAV* or *TRBV*). Demultiplexing is done using Illumina `bcl2fastq` with the options `--use-bases-mask Y28,I150 --barcode-mismatches 0,0 --create-fastq-for-index-reads` and a SampleSheet with 150xN as the index sequence (not provided). After demultiplexing the sequencing data, this pipeline performs downstream analyses, including alignment, quality filters and generating a results table with cell barcodes and TCR assignments.
 
-WAT3R can be run in a [Docker](https://www.docker.com) container or as a workflow on [Terra](https://app.terra.bio). Terra provides access to Google Cloud computing resources through a simple web-based user interface for non-coding biologists. Below we describe how to run WAT3R using Docker.
+WAT3R can be run in a [Docker](https://www.docker.com) container, as described below. Alternatively, it can be run as a workflow on [Terra](https://github.com/mainciburu/WAT3R/wiki/Terra).
+
+Please check out our **[wiki pages](https://github.com/mainciburu/WAT3R/wiki)** for a vignette, details about the output, and frequently asked questions.
 
 
 ## Prerequisites
@@ -63,6 +65,7 @@ downstream -u /workdir/wat3r/sample_igblast_db-pass.tsv \
 This will create a new folder named **downstream**:
 - barcode_results.csv: final results table, summarized per cell barcode.
 - barcode_UMI_results.csv: final results table, summarized per UMI.
+For more information on the output tables, see our [wiki](https://github.com/mainciburu/WAT3R/wiki).
 
 Plots without cell annotations:
 - plots/db_histograms.pdf, which shows a histogram of read numbers (>=3) per consensus sequence, and a histogram of the error rate per consensus sequence.
