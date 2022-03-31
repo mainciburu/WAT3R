@@ -6,7 +6,7 @@ This analysis pipeline is for data from the T-cell Receptor Enrichment to linK c
 
 WAT3R can be run in a [Docker](https://www.docker.com) container, as described below. Alternatively, it can be run as a workflow on [Terra](https://github.com/mainciburu/WAT3R/wiki/Terra).
 
-Please check out our **[wiki pages](https://github.com/mainciburu/WAT3R/wiki)** for a vignette, details about the output, and frequently asked questions.
+Please check out our [wiki pages](https://github.com/mainciburu/WAT3R/wiki) for a vignette, details about the output, and frequently asked questions.
 
 
 ## Prerequisites
