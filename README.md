@@ -1,4 +1,4 @@
-<img align="right" src="image/WAT3Rlogo.png" width="120">
+<img align="right" src="logo/WAT3Rlogo.png" width="120">
 
 # WAT3R | Workflow for the Association of T-cell receptors from 3' single-cell RNA-seq
 
