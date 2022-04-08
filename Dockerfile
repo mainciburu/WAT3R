@@ -7,7 +7,8 @@ WORKDIR /
 RUN apt-get update && apt-get install -y gnupg && apt-get install -y wget
 
 # Install R version 4.1.2
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
 RUN echo "deb http://cloud.r-project.org/bin/linux/debian buster-cran40/" >> /etc/apt/sources.list
 RUN apt-get update && apt install -y -t buster-cran40 r-base-core && apt install -y -t buster-cran40 r-base
 
