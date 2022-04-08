@@ -16,11 +16,12 @@ UMIlength<-as.integer(args[3])
 library(ggplot2)
 library(dplyr)
 library(RColorBrewer)
+library(data.table)
 
 setwd(BaseFolder)
 
-reads<-read.table("./fastq_processed/BCSeq_final_filtered_qfiltered_cluster.txt", stringsAsFactors=F)
-x<-data.frame(BC.UMI=substr(x = reads$V1, start = 1, stop = BClength+UMIlength),
+reads<-fread("./fastq_processed/BCSeq_final_filtered_qfiltered_cluster.txt", stringsAsFactors=F, header=F)
+x<-data.table(BC.UMI=substr(x = reads$V1, start = 1, stop = BClength+UMIlength),
               Cluster=substr(x = reads$V1, start = BClength+UMIlength+2, stop = nchar(reads$V1)))
 x$Cluster<-factor(x$Cluster, levels = 1:max(as.integer(x$Cluster)))
 
@@ -38,7 +39,7 @@ x<-left_join(x, freq.second, by = "BC.UMI", keep = FALSE)
 x$Ratio<-x$freq.first/x$freq.second
 
 i<-!duplicated(x$BC.UMI)
-plotter<-data.frame(BC.UMI=x$BC.UMI[i],
+plotter<-data.table(BC.UMI=x$BC.UMI[i],
                     Cluster=x$Cluster[i],
                     Frequency.BC.UMI=x$Frequency.BC.UMI[i],
                     Frequency.BC.UMI.Cluster=x$Frequency[i],
@@ -58,4 +59,4 @@ ggplot(plotter, aes(Proportion, logRatio, color=logFrequency.BC.UMI)) + geom_poi
   theme(text=element_text(size=20)) + ggtitle("TCR Sequences Clustering", subtitle=paste0(nread, " (", pct.read, "%)", " reads passing default filters (Proportion > 0.5, Ratio > 2)"))
 dev.off()
 
-write.table(plotter, file = "./wat3r/QC/BC_UMI_cluster_metrics.txt", quote = F)
+fwrite(plotter, file = "./wat3r/QC/BC_UMI_cluster_metrics.txt", quote = F)

@@ -5,6 +5,7 @@ library(stringr)
 library(mclust)
 library(ggplot2)
 library(cowplot)
+library(data.table)
 
 if(length(args)==7){
     BaseFolder<-args[1]
@@ -38,14 +39,14 @@ writeLines(paste0(date(), "\n"), logfile)
 writeLines(paste0("Starting analysis for sample ", SampleName, "\n"), logfile)
 
 ### Import TCR alignment results
-db<-read.table("input/sample_igblast_db-pass.tsv", sep = "\t", stringsAsFactors = F, header = T, row.names = NULL)
+db<-fread("input/sample_igblast_db-pass.tsv", sep = "\t", stringsAsFactors = F, header = T)
 writeLines(paste0("Imported ", nrow(db), " results \n"), logfile)
 nread<-sum(db$consensus_count)
 writeLines(paste0("Number of aligned reads: ", nread, " \n"), logfile)
 metrics<-rbind(metrics, c("Consensus and alignment", nread))
 
 ## Import consensus building error
-x<-read.table("input/stats.log", fill = T, header = T, sep = "\t", row.names = NULL)
+x<-fread("input/stats.log", fill = T, header = T, sep = "\t")
 db$error_rate<-x$ERROR[match(db$sequence_id, x$BARCODE)]
 
 
@@ -60,7 +61,7 @@ db<-db%>%arrange(barcode, desc(consensus_count))
 
 ### Filter to selected clusters
 writeLines("Filtering by selected TCR sequence clusters ---------------- \n", logfile)
-cl<-read.table("input/BC_UMI_cluster_metrics.txt")
+cl<-fread("input/BC_UMI_cluster_metrics.txt")
 cl.selected<-cl[cl$Proportion>MinProportion & cl$logRatio>=MinLogRatio,c("BC.UMI", "Cluster")]
 cl.selected<-paste0(cl.selected$BC.UMI, "_", cl.selected$Cluster)
 
