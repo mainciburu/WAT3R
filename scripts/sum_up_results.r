@@ -7,6 +7,8 @@ library(ggplot2)
 library(cowplot)
 library(data.table)
 
+args=(commandArgs(TRUE))
+
 if(length(args)==7){
     BaseFolder<-args[1]
     SampleName<-args[2]
