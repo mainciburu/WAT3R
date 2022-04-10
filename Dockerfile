@@ -4,7 +4,7 @@ FROM continuumio/miniconda3:4.10.3
 WORKDIR /
 
 # Install required software
-RUN apt-get update && apt-get install -y gnupg && apt-get install -y wget
+RUN apt-get update && apt-get install -y gnupg && apt-get install -y wget && apt-get install -y bc
 
 # Install R version 4.1.2
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
