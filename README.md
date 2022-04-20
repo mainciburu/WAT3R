@@ -65,6 +65,7 @@ downstream -u /workdir/wat3r/sample_igblast_db-pass.tsv \
 This will create a new folder named **downstream**:
 - barcode_results.csv: final results table, summarized per cell barcode.
 - barcode_UMI_results.csv: final results table, summarized per UMI.
+
 For more information on the output tables, see our [wiki](https://github.com/mainciburu/WAT3R/wiki).
 
 Plots without cell annotations:
