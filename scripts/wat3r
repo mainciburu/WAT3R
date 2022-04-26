@@ -21,14 +21,14 @@ Help()
    echo "   -d     working directory for analysis"
    echo "   -c     skip barcode correction"
    echo "   -u     skip UMI correction"
-   echo "	-B		 cell barcode length  (default is 16) barcode must be placed previous to UMI"  
-   echo "	-U		 UMI length  (default is 12) UMI must be placed after barcode"
+   echo "	-B		 cell barcode length (default is 16) barcode must be placed before UMI"  
+   echo "	-U		 UMI length (default is 12) UMI must be placed after barcode"
    echo "   -l     optional txt.gz list of allowed barcodes for correction (default is 10x 3' v3 list)"
    echo "   -q     quality score threshold (default is 25)"
    echo "   -i     cluster identity threshold (default is 0.9)"
    echo "   -e     max error for consensus (default is 0.5)"
    echo "   -g     max gap for consensus (default is 0.5)"
-   echo "   -o     organism (default is human)"
+   echo "   -o     organism (default is human, other options: mouse, rhesus_monkey)"
    echo "   -p     number of processors"
 
 }
