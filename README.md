@@ -17,7 +17,7 @@ Since the software is run in a self-contained Docker image, you need Docker. The
 Either pull the image from Docker hub or build from source as follows.
 
 1. Clone Github repository to your local disk.
-2. From the top-level folder, build the docker image:
+2. From the top-level folder (WAT3R), build the docker image:
 ```
 docker build -t mainciburu/wat3r .
 ```
